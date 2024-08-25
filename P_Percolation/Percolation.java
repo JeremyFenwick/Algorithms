@@ -1,13 +1,11 @@
 import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
 public class Percolation {
-    private final int size;
+    private final int size, virtualStart, virtualEnd;
     private final WeightedQuickUnionUF fullData;
     private final WeightedQuickUnionUF topData;
     private final boolean[] opened;
     private int openedCount;
-    private final int virtualStart;
-    private final int virtualEnd;
 
     public Percolation(int n) {
         if (n < 1) {

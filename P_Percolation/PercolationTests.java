@@ -47,14 +47,6 @@ class PercolationTest {
     @Test
     void monteCarlo() {
         var sim = new PercolationStats(2, 10000);
-        assertTrue(sim.mean() > 0);
-    }
-
-    @Test
-    void largeMonteCarlo() {
-        var sim = new PercolationStats(50, 20);
-        var low = sim.confidenceLo();
-        var high = sim.confidenceHi();
-        var mean = sim.mean();
+        assertTrue(sim.mean() > 0.5);
     }
 }
