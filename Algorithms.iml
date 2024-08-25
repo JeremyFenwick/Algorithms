@@ -5,11 +5,11 @@
   </component>
   <component name="NewModuleRootManager" inherit-compiler-output="true">
     <exclude-output />
-    <content url="file://$MODULE_DIR$/P_HelloWorld">
-      <sourceFolder url="file://$MODULE_DIR$/P_HelloWorld" isTestSource="false" />
+    <content url="file://$MODULE_DIR$/HelloWorld">
+      <sourceFolder url="file://$MODULE_DIR$/HelloWorld" isTestSource="false" />
     </content>
-    <content url="file://$MODULE_DIR$/P_Percolation">
-      <sourceFolder url="file://$MODULE_DIR$/P_Percolation" isTestSource="false" />
+    <content url="file://$MODULE_DIR$/Percolation">
+      <sourceFolder url="file://$MODULE_DIR$/Percolation" isTestSource="false" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
