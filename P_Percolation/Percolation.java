@@ -2,30 +2,30 @@ import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
 public class Percolation {
     private final int size;
-    private final WeightedQuickUnionUF data;
+    private final WeightedQuickUnionUF fullData;
+    private final WeightedQuickUnionUF topData;
     private final boolean[] opened;
-    private int opened_count;
+    private int openedCount;
     private final int virtualStart;
     private final int virtualEnd;
 
     public Percolation(int n) {
-        size = n;
-        data = new WeightedQuickUnionUF((n * n) + 2);
-        opened = new boolean[n * n];
-        virtualStart = (n * n) ;
-        virtualEnd = (n * n) + 1;
-        opened_count = 0;
-        for (var i = 1; i <= size; i++) {
-            var bottomIndex = coordinatesToInteger(1, i);
-            var topIndex = coordinatesToInteger(size, i);
-            data.union(virtualStart, bottomIndex);
-            data.union(virtualEnd, topIndex);
+        if (n < 1) {
+            throw new IllegalArgumentException("Size must be at least one!");
         }
+
+        size = n;
+        fullData = new WeightedQuickUnionUF((n * n) + 2);
+        topData = new WeightedQuickUnionUF((n * n) + 1);
+        opened = new boolean[n * n];
+        virtualStart = (n * n);
+        virtualEnd = (n * n) + 1;
+        openedCount = 0;
     }
 
     private int coordinatesToInteger(int row, int col) {
         if (row < 1 || row > size || col < 1 || col > size) {
-            throw new IndexOutOfBoundsException("Invalid coordinate entry - out of bounds");
+            throw new IllegalArgumentException("Invalid coordinate entry - out of bounds");
         }
         return ((row - 1) * size) + (col - 1);
     }
@@ -34,29 +34,45 @@ public class Percolation {
         return row >= 1 && row <= size && col >= 1 && col <= size;
     }
 
+    private void loadData(int firstIndex, int secondIndex) {
+        fullData.union(firstIndex, secondIndex);
+        topData.union(firstIndex, secondIndex);
+    }
+
     public void open(int row, int col) {
         var index = coordinatesToInteger(row, col);
+        if (opened[index]) {
+            return;
+        }
         opened[index] = true;
-        opened_count++;
+        openedCount++;
+        // If we are on the top row, connect to the virtual start
+        if (row == 1) {
+            loadData(index, virtualStart);
+        }
+        // If we are on the bottom row, connect to the virtual end
+        if (row == size) {
+            fullData.union(index, virtualEnd);
+        }
         // If the site above is open, perform a union
         if (inBounds(row - 1, col) && isOpen(row - 1, col)) {
             var siteIndex = coordinatesToInteger(row - 1, col);
-            data.union(index, siteIndex);
+            loadData(index, siteIndex);
         }
         // Now the site below
         if (inBounds(row + 1, col) && isOpen(row + 1, col)) {
             var siteIndex = coordinatesToInteger(row + 1, col);
-            data.union(index, siteIndex);
+            loadData(index, siteIndex);
         }
         // Now the site to the left
         if (inBounds(row, col - 1) && isOpen(row, col - 1)) {
             var siteIndex = coordinatesToInteger(row, col - 1);
-            data.union(index, siteIndex);
+            loadData(index, siteIndex);
         }
         // Now the site to the right
         if (inBounds(row, col + 1) && isOpen(row, col + 1)) {
             var siteIndex = coordinatesToInteger(row, col + 1);
-            data.union(index, siteIndex);
+            loadData(index, siteIndex);
         }
     }
 
@@ -67,18 +83,21 @@ public class Percolation {
 
     public boolean isFull(int row, int col) {
         var index = coordinatesToInteger(row, col);
-        var firstRoot = data.find(virtualStart);
-        var secondRoot = data.find(index);
+        if (!opened[index]) {
+            return false;
+        }
+        var firstRoot = topData.find(virtualStart);
+        var secondRoot = topData.find(index);
         return firstRoot == secondRoot;
     }
 
     public int numberOfOpenSites() {
-        return opened_count;
+        return openedCount;
     }
 
     public boolean percolates() {
-        var firstRoot = data.find(virtualStart);
-        var secondRoot = data.find(virtualEnd);
+        var firstRoot = fullData.find(virtualStart);
+        var secondRoot = fullData.find(virtualEnd);
         return firstRoot == secondRoot;
     }
 
