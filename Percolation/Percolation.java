@@ -11,7 +11,6 @@ public class Percolation {
         if (n < 1) {
             throw new IllegalArgumentException("Size must be at least one!");
         }
-
         size = n;
         fullData = new WeightedQuickUnionUF((n * n) + 2);
         topData = new WeightedQuickUnionUF((n * n) + 1);
