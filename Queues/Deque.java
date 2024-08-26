@@ -30,9 +30,9 @@ public class Deque<Item> implements Iterable<Item> {
 
         public Item next() {
             if (!hasNext()) throw new java.util.NoSuchElementException();
-            var oldNode = workingNode;
+            var item = workingNode.item;
             workingNode = workingNode.next;
-            return oldNode.item;
+            return item;
         }
 
         public void remove() {
@@ -52,17 +52,16 @@ public class Deque<Item> implements Iterable<Item> {
         if (item == null) {
             throw new IllegalArgumentException("Cannot add a null item!");
         }
-        var oldFirst = firstNode;
         var newNode = new Node();
         newNode.item = item;
-        newNode.next = oldFirst;
-        newNode.previous = null;
-        firstNode = newNode;
+        newNode.next = firstNode;
         if (isEmpty()) {
+            firstNode = newNode;
             lastNode = firstNode;
         }
         else {
-            oldFirst.previous = firstNode;
+            firstNode.previous = newNode;
+            firstNode = newNode;
         }
         length++;
     }
@@ -71,17 +70,16 @@ public class Deque<Item> implements Iterable<Item> {
         if (item == null) {
             throw new IllegalArgumentException("Cannot add a null item!");
         }
-        var oldLast = lastNode;
         var newNode = new Node();
         newNode.item = item;
-        newNode.next = null;
-        newNode.previous = oldLast;
-        lastNode = newNode;
+        newNode.previous = lastNode;
         if (isEmpty()) {
+            lastNode = newNode;
             firstNode = lastNode;
         }
         else {
-            oldLast.next = lastNode;
+            lastNode.next = newNode;
+            lastNode = newNode;
         }
         length++;
     }
@@ -90,20 +88,32 @@ public class Deque<Item> implements Iterable<Item> {
         if (isEmpty()) {
             throw new java.util.NoSuchElementException("Cannot remove from an empty list!");
         }
-        var oldFirst = firstNode;
+        var item = firstNode.item;
         firstNode = firstNode.next;
+        if (firstNode != null) {
+            firstNode.previous = null;
+        }
+        else {
+            lastNode = firstNode;
+        }
         length--;
-        return oldFirst.item;
+        return item;
     }
 
     public Item removeLast() {
         if (isEmpty()) {
             throw new java.util.NoSuchElementException("Cannot remove from an empty list!");
         }
-        var oldLast = lastNode;
+        var item = lastNode.item;
         lastNode = lastNode.previous;
+        if (lastNode != null) {
+            lastNode.next = null;
+        }
+        else {
+            firstNode = lastNode;
+        }
         length--;
-        return oldLast.item;
+        return item;
     }
 
     public Iterator<Item> iterator() {

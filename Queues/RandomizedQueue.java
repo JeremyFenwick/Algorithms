@@ -7,20 +7,23 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
     private Item[] data;
     private int length;
 
+
     public RandomizedQueue() {
-        //noinspection unchecked
         data = (Item[]) new Object[INITIAL_CAPACITY];
         length = 0;
     }
 
     private class RandomizedQueueIterator implements Iterator<Item> {
-        private final Item[] randomData;
         private int index;
+        private int[] randomIndexes;
 
         private RandomizedQueueIterator() {
             index = 0;
-            randomData = data.clone();
-            StdRandom.shuffle(randomData, 0, length);
+            randomIndexes = new int[length];
+            for (int i = 0; i < length; i++) {
+                randomIndexes[i] = i;
+            }
+            StdRandom.shuffle(randomIndexes);
         }
 
         public boolean hasNext() {
@@ -29,9 +32,10 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 
         public Item next() {
             if (!hasNext()) throw new java.util.NoSuchElementException();
-            var result =  randomData[index];
+            var randomizedIndex = randomIndexes[index];
+            var item = data[randomizedIndex];
             index++;
-            return result;
+            return item;
         }
 
         public void remove() {
@@ -40,7 +44,6 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
     }
 
     private void resize(int capacity) {
-        //noinspection unchecked
         var copy = (Item[]) new Object[capacity];
         for (int i = 0; i < length; i++) {
             copy[i] = data[i];
@@ -98,5 +101,9 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 
     public Iterator<Item> iterator() {
         return new RandomizedQueueIterator();
+    }
+
+    public static void main(String[] args) {
+
     }
 }

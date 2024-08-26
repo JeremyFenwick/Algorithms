@@ -15,6 +15,7 @@ class DequeTest {
     void addRemoveTest2() {
         var deque = new Deque<Integer>();
         deque.addFirst(12);
+        deque.addFirst(10);
         var result = deque.removeLast();
         assertEquals(12, result);
     }
@@ -86,6 +87,42 @@ class DequeTest {
         deque.addFirst(3);
         for (var number : deque) {
             assertTrue(number > 0 && number < 4);
+        }
+    }
+
+    @Test void StressIterator() {
+        var deque = new Deque<Integer>();
+        deque.addFirst(1);
+        for (var number : deque) {
+            System.out.print(number);
+        }
+        System.out.println();
+        deque.addLast(2);
+        for (var number : deque) {
+            System.out.print(number);
+        }
+        System.out.println();
+        deque.addFirst(3);
+        for (var number : deque) {
+            System.out.print(number);
+        }
+        System.out.println();
+        deque.removeLast();
+        for (var number : deque) {
+            System.out.print(number);
+        }
+    }
+
+    @Test void MoreInteratorStress() {
+        var deque = new Deque<Integer>();
+        deque.addFirst(1);
+        for (var number : deque) {
+            System.out.print(number);
+        }
+        System.out.println();
+        deque.removeLast();
+        for (var number : deque) {
+            System.out.print(number);
         }
     }
 }
