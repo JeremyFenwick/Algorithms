@@ -35,5 +35,16 @@ class RandomizedQueueTest {
         queue.dequeue();
         queue.enqueue(1);
     }
+
+    @Test
+    void iterator() {
+        var queue = new RandomizedQueue<Integer>();
+        queue.enqueue(1);
+        queue.enqueue(2);
+        queue.enqueue(3);
+        for (var number : queue) {
+            assertTrue(number >= 1 && number <= 3);
+        }
+    }
 }
 

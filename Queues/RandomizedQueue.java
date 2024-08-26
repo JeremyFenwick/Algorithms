@@ -20,7 +20,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         private RandomizedQueueIterator() {
             index = 0;
             randomData = data.clone();
-            StdRandom.shuffle(randomData);
+            StdRandom.shuffle(randomData, 0, length);
         }
 
         public boolean hasNext() {
