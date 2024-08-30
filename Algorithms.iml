@@ -5,6 +5,9 @@
   </component>
   <component name="NewModuleRootManager" inherit-compiler-output="true">
     <exclude-output />
+    <content url="file://$MODULE_DIR$/CollinearPoints">
+      <sourceFolder url="file://$MODULE_DIR$/CollinearPoints" isTestSource="false" />
+    </content>
     <content url="file://$MODULE_DIR$/HelloWorld">
       <sourceFolder url="file://$MODULE_DIR$/HelloWorld" isTestSource="false" />
     </content>
