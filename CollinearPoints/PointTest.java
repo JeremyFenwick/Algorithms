@@ -137,7 +137,7 @@ class PointTest {
         var point3 = new Point(3, 3);
         var point4 = new Point(4, 4);
         var point5 = new Point(5, 5);
-        var point6 = new Point(5, 5);
+        var point6 = new Point(8, 8);
         var point7 = new Point(6, 6);
         var point8 = new Point(7, 7);
         var point9 = new Point(10, 12);

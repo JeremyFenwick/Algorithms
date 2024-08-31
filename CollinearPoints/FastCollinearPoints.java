@@ -1,21 +1,22 @@
 import edu.princeton.cs.algs4.StdDraw;
 import edu.princeton.cs.algs4.StdOut;
 import edu.princeton.cs.algs4.In;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class FastCollinearPoints {
-    private Point[] sortedData;
-    private Point[] rawData;
-    private List<LineSegment> resultData;
-    private List<Point> lastFour;
+    private final Point[] sortedData;
+    private final Point[] rawData;
+    private final List<LineSegment> resultData;
+    private final List<Point> lastFour;
 
-    public FastCollinearPoints (Point[] points) {
+    public FastCollinearPoints(Point[] points) {
         if (points == null) {
             throw new IllegalArgumentException();
         }
-        sortedData = points;
+        sortedData = points.clone();
         resultData = new ArrayList<LineSegment>();
         lastFour = new ArrayList<Point>();
         rawData = sortedData.clone();
@@ -28,7 +29,7 @@ public class FastCollinearPoints {
             if (sortedData[i] == null) {
                 throw new IllegalArgumentException();
             }
-            if (i > 0 && sortedData[i] == sortedData[i - 1]) {
+            if (i > 0 && sortedData[i].compareTo(sortedData[i - 1]) == 0) {
                 throw new IllegalArgumentException();
             }
             PointSearch(sortedData[i]);
@@ -42,17 +43,19 @@ public class FastCollinearPoints {
             if (currentSlope == Double.NEGATIVE_INFINITY) {
                 continue;
             }
+            var lastSlope = !lastFour.isEmpty() ? lastFour.get(0).slopeTo(lastFour.get(1)) : Double.NEGATIVE_INFINITY;
             var nextSlope = origin.slopeTo(rawData[i + 1]);
-            var nextNextSlope = origin.slopeTo(rawData[i+2]);
+            var nextNextSlope = origin.slopeTo(rawData[i + 2]);
 
             var current = rawData[i];
-            var next = rawData[i+1];
-            var nextNext = rawData[i+2];
+            var next = rawData[i + 1];
+            var nextNext = rawData[i + 2];
 
-            if (lastFour.contains(origin) || lastFour.contains(current)) {
+            if (currentSlope != lastSlope) {
+                lastFour.clear();
+            } else if (lastFour.contains(origin) || lastFour.contains(current)) {
                 continue;
-            }
-            if (lastFour.contains(next) || lastFour.contains(nextNext)) {
+            } else if (lastFour.contains(next) || lastFour.contains(nextNext)) {
                 continue;
             }
 
@@ -61,8 +64,8 @@ public class FastCollinearPoints {
                 lastFour.clear();
                 lastFour.add(origin);
                 lastFour.add(rawData[i]);
-                lastFour.add(rawData[i+1]);
-                lastFour.add(rawData[i+2]);
+                lastFour.add(rawData[i + 1]);
+                lastFour.add(rawData[i + 2]);
                 i += 2;
             }
         }
@@ -76,7 +79,7 @@ public class FastCollinearPoints {
         return result;
     }
 
-    public int numberOfSegments(){
+    public int numberOfSegments() {
         return resultData.size();
     }
 
