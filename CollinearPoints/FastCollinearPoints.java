@@ -9,6 +9,7 @@ public class FastCollinearPoints {
     private Point[] sortedData;
     private Point[] rawData;
     private List<LineSegment> resultData;
+    private List<Point> lastFour;
 
     public FastCollinearPoints (Point[] points) {
         if (points == null) {
@@ -16,6 +17,7 @@ public class FastCollinearPoints {
         }
         sortedData = points;
         resultData = new ArrayList<LineSegment>();
+        lastFour = new ArrayList<Point>();
         rawData = sortedData.clone();
         Arrays.sort(sortedData);
         BeginSearchRoutine();
@@ -37,21 +39,31 @@ public class FastCollinearPoints {
         Arrays.sort(rawData, origin.slopeOrder());
         for (int i = 0; i <= rawData.length - 3; i++) {
             var currentSlope = origin.slopeTo(rawData[i]);
-            var currentCompare = origin.compareTo(rawData[i]);
             if (currentSlope == Double.NEGATIVE_INFINITY) {
                 continue;
             }
             var nextSlope = origin.slopeTo(rawData[i + 1]);
-            var nextCompare = origin.compareTo(rawData[i+1]);
             var nextNextSlope = origin.slopeTo(rawData[i+2]);
-            var nextNextCompare = origin.compareTo(rawData[i+2]);
 
-            if (currentCompare > 0 || nextCompare > 0 || nextNextCompare > 0) {
+            var current = rawData[i];
+            var next = rawData[i+1];
+            var nextNext = rawData[i+2];
+
+            if (lastFour.contains(origin) || lastFour.contains(current)) {
                 continue;
             }
+            if (lastFour.contains(next) || lastFour.contains(nextNext)) {
+                continue;
+            }
+
             if (currentSlope == nextSlope && currentSlope == nextNextSlope) {
                 resultData.add(new LineSegment(origin, rawData[i + 2]));
-                i += 3;
+                lastFour.clear();
+                lastFour.add(origin);
+                lastFour.add(rawData[i]);
+                lastFour.add(rawData[i+1]);
+                lastFour.add(rawData[i+2]);
+                i += 2;
             }
         }
     }

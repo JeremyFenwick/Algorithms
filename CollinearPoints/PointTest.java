@@ -64,11 +64,13 @@ class PointTest {
         var point2 = new Point(2, 2);
         var point3 = new Point(3, 3);
         var point4 = new Point(4, 4);
-        var array = new Point[4];
+        var point5 = new Point(5, 6);
+        var array = new Point[5];
         array[0] = point1;
         array[1] = point2;
         array[2] = point3;
         array[3] = point4;
+        array[4] = point5;
         var search = new BruteCollinearPoints(array);
         assertEquals(1, search.numberOfSegments());
     }
@@ -94,12 +96,62 @@ class PointTest {
         var point2 = new Point(2, 2);
         var point3 = new Point(3, 3);
         var point4 = new Point(4, 4);
-        var array = new Point[4];
+        var point5 = new Point(5, 5);
+        var array = new Point[5];
         array[0] = point1;
         array[1] = point2;
         array[2] = point3;
         array[3] = point4;
+        array[4] = point5;
         var search = new FastCollinearPoints(array);
         assertEquals(1, search.numberOfSegments());
+    }
+
+    @Test
+    void fastSearchDoubleTest() {
+        var point1 = new Point(1, 1);
+        var point2 = new Point(2, 2);
+        var point3 = new Point(3, 3);
+        var point4 = new Point(4, 4);
+        var point5 = new Point(5, 5);
+        var point6 = new Point(6, 6);
+        var point7 = new Point(7, 7);
+        var point8 = new Point(8, 8);
+        var array = new Point[8];
+        array[0] = point1;
+        array[1] = point2;
+        array[2] = point3;
+        array[3] = point4;
+        array[4] = point5;
+        array[5] = point6;
+        array[6] = point7;
+        array[7] = point8;
+        var search = new FastCollinearPoints(array);
+        assertEquals(2, search.numberOfSegments());
+    }
+
+    @Test
+    void secondFastSearchDoubleTest() {
+        var point1 = new Point(1, 1);
+        var point2 = new Point(2, 2);
+        var point3 = new Point(3, 3);
+        var point4 = new Point(4, 4);
+        var point5 = new Point(5, 5);
+        var point6 = new Point(5, 5);
+        var point7 = new Point(6, 6);
+        var point8 = new Point(7, 7);
+        var point9 = new Point(10, 12);
+        var array = new Point[9];
+        array[0] = point1;
+        array[1] = point2;
+        array[2] = point3;
+        array[3] = point4;
+        array[4] = point9;
+        array[5] = point5;
+        array[6] = point6;
+        array[7] = point7;
+        array[8] = point8;
+        var search = new FastCollinearPoints(array);
+        assertEquals(2, search.numberOfSegments());
     }
 }
