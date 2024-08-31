@@ -7,68 +7,79 @@ import java.util.Arrays;
 import java.util.List;
 
 public class FastCollinearPoints {
-    private final Point[] sortedData;
-    private final Point[] rawData;
     private final List<LineSegment> resultData;
-    private final List<Point> lastFour;
 
     public FastCollinearPoints(Point[] points) {
         if (points == null) {
             throw new IllegalArgumentException();
         }
-        sortedData = points.clone();
-        resultData = new ArrayList<LineSegment>();
-        lastFour = new ArrayList<Point>();
-        rawData = sortedData.clone();
+        var sortedData = points.clone();
         Arrays.sort(sortedData);
-        BeginSearchRoutine();
-    }
-
-    private void BeginSearchRoutine() {
-        for (int i = 0; i < sortedData.length; i++) {
-            if (sortedData[i] == null) {
-                throw new IllegalArgumentException();
-            }
-            if (i > 0 && sortedData[i].compareTo(sortedData[i - 1]) == 0) {
-                throw new IllegalArgumentException();
-            }
-            PointSearch(sortedData[i]);
+        resultData = new ArrayList<LineSegment>();
+        if (sortedData.length > 3) {
+            BeginSearchRoutine(sortedData);
         }
     }
 
-    private void PointSearch(Point origin) {
-        Arrays.sort(rawData, origin.slopeOrder());
-        for (int i = 0; i <= rawData.length - 3; i++) {
-            var currentSlope = origin.slopeTo(rawData[i]);
-            if (currentSlope == Double.NEGATIVE_INFINITY) {
-                continue;
+    private void BeginSearchRoutine(Point[] searchData) {
+        for (int i = 0; i < searchData.length; i++) {
+            if (searchData[i] == null) {
+                throw new IllegalArgumentException();
             }
-            var lastSlope = !lastFour.isEmpty() ? lastFour.get(0).slopeTo(lastFour.get(1)) : Double.NEGATIVE_INFINITY;
-            var nextSlope = origin.slopeTo(rawData[i + 1]);
-            var nextNextSlope = origin.slopeTo(rawData[i + 2]);
-
-            var current = rawData[i];
-            var next = rawData[i + 1];
-            var nextNext = rawData[i + 2];
-
-            if (currentSlope != lastSlope) {
-                lastFour.clear();
-            } else if (lastFour.contains(origin) || lastFour.contains(current)) {
-                continue;
-            } else if (lastFour.contains(next) || lastFour.contains(nextNext)) {
-                continue;
+            if (i > 0 && searchData[i].compareTo(searchData[i - 1]) == 0) {
+                throw new IllegalArgumentException();
             }
 
-            if (currentSlope == nextSlope && currentSlope == nextNextSlope) {
-                resultData.add(new LineSegment(origin, rawData[i + 2]));
-                lastFour.clear();
-                lastFour.add(origin);
-                lastFour.add(rawData[i]);
-                lastFour.add(rawData[i + 1]);
-                lastFour.add(rawData[i + 2]);
-                i += 2;
+            var tempData = searchData.clone();
+            Arrays.sort(tempData, searchData[i].slopeOrder());
+            PointSearch(searchData[i], tempData);
+        }
+    }
+
+    private void PointSearch(Point origin, Point[] searchData) {
+        var candidates = new ArrayList<Point>();
+        candidates.add(origin);
+        var priorSlope = origin.slopeTo(searchData[1]);
+
+        for (int i = 1; i < searchData.length; i++) {
+            var currentSlope = origin.slopeTo(searchData[i]);
+
+            // Candidate list is not long enough
+            if (currentSlope != priorSlope && candidates.size() < 3) {
+                priorSlope = currentSlope;
+                candidates.clear();
+                candidates.add(origin);
+                candidates.add(searchData[i]);
+            }
+            // We have a list of candidates long enough
+            else if (currentSlope != priorSlope && candidates.size() >= 4) {
+                priorSlope = currentSlope;
+                AddSegment(origin, candidates);
+                candidates.clear();
+                candidates.add(origin);
+                candidates.add(searchData[i]);
+            }
+            // End of the array
+            else if (i == searchData.length - 1 && candidates.size() >= 4) {
+                AddSegment(origin, candidates);
+                break;
+            }
+            else {
+                candidates.add(searchData[i]);
             }
         }
+    }
+
+    private void AddSegment(Point origin, List<Point> candidates) {
+        for (var candidate : candidates) {
+            if (origin.compareTo(candidate) > 0) {
+                return;
+            }
+        }
+        var firstPoint = candidates.getFirst();
+        var lastPoint = candidates.getLast();
+        var newSegment = new LineSegment(firstPoint, lastPoint);
+        resultData.add(newSegment);
     }
 
     public LineSegment[] segments() {

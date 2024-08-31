@@ -15,6 +15,20 @@ class PointTest {
     }
 
     @Test
+    void doubleSortTest() {
+        var point1 = new Point(1, 1);
+        var point2 = new Point(2, 2);
+        var point3 = new Point(3, 3);
+        var array = new Point[3];
+        array[0] = point3;
+        array[1] = point2;
+        array[2] = point1;
+        Arrays.sort(array);
+        Arrays.sort(array, point2.slopeOrder());
+        assertTrue(true);
+    }
+
+    @Test
     void slopeTest() {
         var origin = new Point(0 ,0);
         var point2 = new Point(2, 2);
@@ -152,6 +166,6 @@ class PointTest {
         array[7] = point7;
         array[8] = point8;
         var search = new FastCollinearPoints(array);
-        assertEquals(2, search.numberOfSegments());
+        assertEquals(1, search.numberOfSegments());
     }
 }
