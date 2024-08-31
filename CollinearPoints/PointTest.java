@@ -141,7 +141,7 @@ class PointTest {
         array[6] = point7;
         array[7] = point8;
         var search = new FastCollinearPoints(array);
-        assertEquals(2, search.numberOfSegments());
+        assertEquals(1, search.numberOfSegments());
     }
 
     @Test
@@ -167,5 +167,26 @@ class PointTest {
         array[8] = point8;
         var search = new FastCollinearPoints(array);
         assertEquals(1, search.numberOfSegments());
+    }
+
+    @Test
+    void nullTest() {
+        var point1 = new Point(1, 1);
+        var point2 = new Point(2, 2);
+        Point point3 = null;
+        var point4 = new Point(4, 4);
+        var point5 = new Point(5, 6);
+        var array = new Point[5];
+        array[0] = point1;
+        array[1] = point2;
+        array[2] = point3;
+        array[3] = point4;
+        array[4] = point5;
+        try {
+            var search = new BruteCollinearPoints(array);
+            assertEquals(1, search.numberOfSegments());
+        } catch (Exception ex) {
+            System.out.println(ex);
+        }
     }
 }
