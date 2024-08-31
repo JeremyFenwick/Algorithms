@@ -87,4 +87,19 @@ class PointTest {
         var search = new BruteCollinearPoints(array);
         assertEquals(1, search.numberOfSegments());
     }
+
+    @Test
+    void fastSearchTest() {
+        var point1 = new Point(1, 1);
+        var point2 = new Point(2, 2);
+        var point3 = new Point(3, 3);
+        var point4 = new Point(4, 4);
+        var array = new Point[4];
+        array[0] = point1;
+        array[1] = point2;
+        array[2] = point3;
+        array[3] = point4;
+        var search = new FastCollinearPoints(array);
+        assertEquals(1, search.numberOfSegments());
+    }
 }

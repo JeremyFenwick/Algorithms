@@ -6,7 +6,6 @@ import java.util.Arrays;
 import java.util.List;
 
 public class FastCollinearPoints {
-    private int resultNumber;
     private Point[] sortedData;
     private Point[] rawData;
     private List<LineSegment> resultData;
@@ -15,10 +14,9 @@ public class FastCollinearPoints {
         if (points == null) {
             throw new IllegalArgumentException();
         }
-        resultNumber = 0;
         sortedData = points;
-        rawData = points;
         resultData = new ArrayList<LineSegment>();
+        rawData = sortedData.clone();
         Arrays.sort(sortedData);
         BeginSearchRoutine();
     }
@@ -37,13 +35,20 @@ public class FastCollinearPoints {
 
     private void PointSearch(Point origin) {
         Arrays.sort(rawData, origin.slopeOrder());
-        for (int i = 0; i < rawData.length - 3; i++) {
+        for (int i = 0; i <= rawData.length - 3; i++) {
             var currentSlope = origin.slopeTo(rawData[i]);
+            var currentCompare = origin.compareTo(rawData[i]);
             if (currentSlope == Double.NEGATIVE_INFINITY) {
                 continue;
             }
             var nextSlope = origin.slopeTo(rawData[i + 1]);
-            var nextNextSlope = origin.slopeTo(rawData[i + 2]);
+            var nextCompare = origin.compareTo(rawData[i+1]);
+            var nextNextSlope = origin.slopeTo(rawData[i+2]);
+            var nextNextCompare = origin.compareTo(rawData[i+2]);
+
+            if (currentCompare > 0 || nextCompare > 0 || nextNextCompare > 0) {
+                continue;
+            }
             if (currentSlope == nextSlope && currentSlope == nextNextSlope) {
                 resultData.add(new LineSegment(origin, rawData[i + 2]));
                 i += 3;
@@ -60,7 +65,7 @@ public class FastCollinearPoints {
     }
 
     public int numberOfSegments(){
-        return resultNumber;
+        return resultData.size();
     }
 
     public static void main(String[] args) {
