@@ -13,22 +13,22 @@ public class FastCollinearPoints {
         if (points == null) {
             throw new IllegalArgumentException();
         }
-        nullCheck(points);
+        validator(points);
         var sortedData = points.clone();
         Arrays.sort(sortedData);
         resultData = new ArrayList<LineSegment>();
-        BeginSearchRoutine(sortedData);
+        beginSearchRoutine(sortedData);
     }
 
-    private void nullCheck(Point[] data) {
-        for (Point datum : data) {
-            if (datum == null) {
+    private void validator(Point[] data) {
+        for (Point point : data) {
+            if (point == null) {
                 throw new IllegalArgumentException();
             }
         }
     }
 
-    private void BeginSearchRoutine(Point[] searchData) {
+    private void beginSearchRoutine(Point[] searchData) {
         if (searchData.length <= 3) {
             for (int i = 0; i < searchData.length; i++) {
 
@@ -47,11 +47,11 @@ public class FastCollinearPoints {
 
             var tempData = searchData.clone();
             Arrays.sort(tempData, searchData[i].slopeOrder());
-            PointSearch(searchData[i], tempData);
+            pointSearch(searchData[i], tempData);
         }
     }
 
-    private void PointSearch(Point origin, Point[] searchData) {
+    private void pointSearch(Point origin, Point[] searchData) {
         var candidates = new ArrayList<Point>();
         candidates.add(origin);
         var priorSlope = origin.slopeTo(searchData[1]);
@@ -69,7 +69,7 @@ public class FastCollinearPoints {
             // We have a list of candidates long enough
             else if (currentSlope != priorSlope && candidates.size() >= 4) {
                 priorSlope = currentSlope;
-                AddSegment(origin, candidates);
+                addSegment(origin, candidates);
                 candidates.clear();
                 candidates.add(origin);
                 candidates.add(searchData[i]);
@@ -77,7 +77,7 @@ public class FastCollinearPoints {
             // End of the array
             else if (i == searchData.length - 1 && candidates.size() >= 3 && currentSlope == priorSlope) {
                 candidates.add(searchData[i]);
-                AddSegment(origin, candidates);
+                addSegment(origin, candidates);
                 break;
             }
             else {
@@ -86,7 +86,7 @@ public class FastCollinearPoints {
         }
     }
 
-    private void AddSegment(Point origin, List<Point> candidates) {
+    private void addSegment(Point origin, List<Point> candidates) {
         // The origin must be the smaller than all candidates else we have a duplication issue
         for (var candidate : candidates) {
             if (origin.compareTo(candidate) > 0) {
