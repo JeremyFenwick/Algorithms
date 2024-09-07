@@ -1,4 +1,6 @@
 import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.List;
 import edu.princeton.cs.algs4.MinPQ;
 import edu.princeton.cs.algs4.StdOut;
 import edu.princeton.cs.algs4.In;
@@ -16,37 +18,56 @@ public class Solver {
     }
 
     private void calculateSolution(Board initial) {
-        var priorityQueue = new MinPQ<Node>();
-        var initialNode = new Node(initial, null);
-        priorityQueue.insert(initialNode);
+        // Create two priority queues
+        var priorityQueue = generateMinPq(initial);
+        var twinPriorityQueue = generateMinPq(initial.twin());
 
         while (true) {
+            // Pop nodes from both queues
             var currentNode = priorityQueue.delMin();
+            var twinNode = twinPriorityQueue.delMin();
+
+            // Check if we have a solution
             if (currentNode.board.isGoal()) {
                 generateSolution(currentNode);
                 break;
             }
-            var neighbours = currentNode.board.neighbors();
-            for (var neighbour : neighbours) {
-                // We don't queue a neighbour if its board equals its parent
-                if (currentNode.parent != null && neighbour.equals(currentNode.parent.board)) {
-                    continue;
-                }
-                var newNode = new Node(neighbour, currentNode);
-                priorityQueue.insert(newNode);
+            else if (twinNode.board.isGoal()) {
+                break;
             }
+
+            // Add neighbours to their respective queues
+            addNeighboursToMinPq(currentNode, priorityQueue);
+            addNeighboursToMinPq(twinNode, twinPriorityQueue);
         }
     }
 
     private void generateSolution(Node solutionNode) {
-        var workingNode = solutionNode;
-        while (workingNode != null) {
-            solution.addFirst(workingNode.board);
-            workingNode = workingNode.parent;
+        while (solutionNode != null) {
+            solution.addFirst(solutionNode.board);
+            solutionNode = solutionNode.parent;
         }
     }
 
-    private class Node implements Comparable<Node> {
+    private MinPQ<Node> generateMinPq(Board initial) {
+        var priorityQueue = new MinPQ<Node>();
+        var initialNode = new Node(initial, null);
+        priorityQueue.insert(initialNode);
+        return priorityQueue;
+    }
+
+    private void addNeighboursToMinPq(Node node, MinPQ<Node> minPQ) {
+        var neighbours = node.board.neighbors();
+        for (var neighbour : neighbours) {
+            if (node.parent != null && neighbour.equals(node.parent.board)) {
+                continue;
+            }
+            var newNode = new Node(neighbour, node);
+            minPQ.insert(newNode);
+        }
+    }
+
+    private static class Node implements Comparable<Node> {
         public final Board board;
         public final Node parent;
         public final int moves;
