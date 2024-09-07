@@ -3,9 +3,10 @@ import java.util.List;
 import java.util.ArrayList;
 
 public class Board {
-    private int[] data;
-    private int size, blankIndex, hammingDistance, manhattanDistance;
-    private List<Board> neighbours;
+    private final int[] data;
+    private int blankIndex, hammingDistance, manhattanDistance;
+    private final int size;
+    private final List<Board> neighbours;
 
     public Board(int[][] tiles) {
         size = tiles.length;
