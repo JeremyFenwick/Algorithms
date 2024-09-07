@@ -25,8 +25,7 @@ public class Board {
                 if (value != 0) {
                     computeHammingDistance(index, value, number);
                     computeManhattanDistance(row, col, value - 1);
-                }
-                else {
+                } else {
                     blankIndex = index;
                 }
                 number++;
@@ -39,8 +38,7 @@ public class Board {
         // Compute the hamming distance
         if (!emptySlot && value != expectedValue) {
             hammingDistance++;
-        }
-        else if (emptySlot) {
+        } else if (emptySlot) {
             hammingDistance++;
         }
     }
@@ -163,8 +161,7 @@ public class Board {
         var blankRow = blankIndex / size;
         if (blankRow == 0) {
             return cloneBoardWithSwap(1, 0, 1, 1);
-        }
-        else {
+        } else {
             return cloneBoardWithSwap(0, 0, 0, 1);
         }
     }

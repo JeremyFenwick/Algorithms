@@ -1,8 +1,8 @@
 import java.util.ArrayDeque;
+
 import edu.princeton.cs.algs4.MinPQ;
 import edu.princeton.cs.algs4.StdOut;
 import edu.princeton.cs.algs4.In;
-
 
 public class Solver {
     private final ArrayDeque<Board> solution;
@@ -29,8 +29,7 @@ public class Solver {
             if (currentNode.board.isGoal()) {
                 generateSolution(currentNode);
                 break;
-            }
-            else if (twinNode.board.isGoal()) {
+            } else if (twinNode.board.isGoal()) {
                 break;
             }
 
@@ -118,4 +117,5 @@ public class Solver {
             for (Board board : solver.solution())
                 StdOut.println(board);
         }
-    }}
+    }
+}

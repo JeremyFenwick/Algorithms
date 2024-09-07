@@ -5,34 +5,34 @@ import static org.junit.jupiter.api.Assertions.*;
 class BoardTest {
 
     public Board generateBoard() {
-        var row1 = new int[]{ 8, 1, 3 };
-        var row2 = new int[]{ 4, 0, 2 };
-        var row3 = new int[]{ 7, 6, 5 };
-        var grid = new int[][]{ row1, row2, row3 };
+        var row1 = new int[]{8, 1, 3};
+        var row2 = new int[]{4, 0, 2};
+        var row3 = new int[]{7, 6, 5};
+        var grid = new int[][]{row1, row2, row3};
         return new Board(grid);
     }
 
     public Board generateAlternateBoard() {
-        var row1 = new int[]{ 0, 3, 1 };
-        var row2 = new int[]{ 8, 4, 2 };
-        var row3 = new int[]{ 5, 6, 7 };
-        var grid = new int[][]{ row1, row2, row3 };
+        var row1 = new int[]{0, 3, 1};
+        var row2 = new int[]{8, 4, 2};
+        var row3 = new int[]{5, 6, 7};
+        var grid = new int[][]{row1, row2, row3};
         return new Board(grid);
     }
 
     public Board generateSolvedBoard() {
-        var row1 = new int[]{ 1, 2, 3 };
-        var row2 = new int[]{ 4, 5, 6 };
-        var row3 = new int[]{ 7, 8, 0 };
-        var grid = new int[][]{ row1, row2, row3 };
+        var row1 = new int[]{1, 2, 3};
+        var row2 = new int[]{4, 5, 6};
+        var row3 = new int[]{7, 8, 0};
+        var grid = new int[][]{row1, row2, row3};
         return new Board(grid);
     }
 
     public Board generateProblematicBoard() {
-        var row1 = new int[]{ 1, 0, 3 };
-        var row2 = new int[]{ 4, 2, 5 };
-        var row3 = new int[]{ 7, 8, 6 };
-        var grid = new int[][]{ row1, row2, row3 };
+        var row1 = new int[]{1, 0, 3};
+        var row2 = new int[]{4, 2, 5};
+        var row3 = new int[]{7, 8, 6};
+        var grid = new int[][]{row1, row2, row3};
         return new Board(grid);
     }
 
