@@ -20,6 +20,13 @@ class SolverTest {
         return new Board(grid);
     }
 
+    public Board generateUnsolvableBoard() {
+        var row1 = new int[]{ 1, 0 };
+        var row2 = new int[]{ 2, 3 };
+        var grid = new int[][]{ row1, row2 };
+        return new Board(grid);
+    }
+
 
     @Test
     void solveTest() {
@@ -36,6 +43,16 @@ class SolverTest {
         var board = generateLargerBoard();
         var solver = new Solver(board);
         assertTrue(solver.moves() > 0);
+        for (var item : solver.solution()) {
+            System.out.println(item);
+        }
+    }
+
+    @Test
+    void impossibleSolveTest() {
+        var board = generateUnsolvableBoard();
+        var solver = new Solver(board);
+        assertTrue(solver.moves() == -1);
         for (var item : solver.solution()) {
             System.out.println(item);
         }

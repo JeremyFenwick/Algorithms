@@ -1,6 +1,5 @@
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ArrayList;
 
 public class Board {
     private final int[] data;
@@ -61,7 +60,7 @@ public class Board {
         return ((row) * size) + (col);
     }
 
-    private void generateNeighbours(int[] baseBoard) {
+    private void generateNeighbours() {
         var blankRow = blankIndex / size;
         var blankCol = blankIndex % size;
         // top
@@ -117,8 +116,15 @@ public class Board {
         if (size != compareBoard.size) {
             return false;
         }
-        var otherBoardString = compareBoard.toString();
-        return toString().equals(otherBoardString);
+        for (int row = 0; row < size; row++) {
+            for (int col = 0; col < size; col++) {
+                var index = map(row, col);
+                if (data[index] != compareBoard.data[index]) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     public String toString() {
@@ -164,7 +170,9 @@ public class Board {
     }
 
     public Iterable<Board> neighbors() {
-        generateNeighbours(data);
+        if (neighbours.isEmpty()) {
+            generateNeighbours();
+        }
         return neighbours;
     }
 }

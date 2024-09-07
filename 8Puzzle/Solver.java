@@ -1,13 +1,11 @@
 import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.List;
 import edu.princeton.cs.algs4.MinPQ;
 import edu.princeton.cs.algs4.StdOut;
 import edu.princeton.cs.algs4.In;
 
 
 public class Solver {
-    public ArrayDeque<Board> solution;
+    private final ArrayDeque<Board> solution;
 
     public Solver(Board initial) {
         if (initial == null) {
@@ -59,6 +57,7 @@ public class Solver {
     private void addNeighboursToMinPq(Node node, MinPQ<Node> minPQ) {
         var neighbours = node.board.neighbors();
         for (var neighbour : neighbours) {
+            // We do not add a neighbour if it is the same board as its parent
             if (node.parent != null && neighbour.equals(node.parent.board)) {
                 continue;
             }
@@ -87,19 +86,18 @@ public class Solver {
     }
 
     public boolean isSolvable() {
-        return solution != null;
+        return !solution.isEmpty();
     }
 
     public int moves() {
-        return solution.isEmpty() ? -1 : solution.size();
+        return solution.isEmpty() ? -1 : solution.size() - 1;
     }
 
     public Iterable<Board> solution() {
-        return solution;
+        return !solution.isEmpty() ? solution : null;
     }
 
     public static void main(String[] args) {
-
         // create initial board from file
         In in = new In(args[0]);
         int n = in.readInt();

@@ -14,6 +14,7 @@ algorithms and data structures*
 | Percolation      | 100 / 100 | 😭    |
 | Queues           | 100 / 100 | ⌛     |
 | Collinear Points | 100 / 100 | 🏁    |
+| 8 Puzzle         | 100 / 100 | 😎    |
 
 
 
