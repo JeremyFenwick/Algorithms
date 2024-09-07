@@ -28,6 +28,14 @@ class BoardTest {
         return new Board(grid);
     }
 
+    public Board generateProblematicBoard() {
+        var row1 = new int[]{ 1, 0, 3 };
+        var row2 = new int[]{ 4, 2, 5 };
+        var row3 = new int[]{ 7, 8, 6 };
+        var grid = new int[][]{ row1, row2, row3 };
+        return new Board(grid);
+    }
+
     @Test
     void printBoardTest() {
         var board = generateBoard();
@@ -74,6 +82,18 @@ class BoardTest {
     @Test
     void alternateNeighboursTest() {
         var board = generateAlternateBoard();
+        System.out.println("Original");
+        System.out.println(board);
+        System.out.println("Neighbours");
+        var neighbours = board.neighbors();
+        for (var neighbour : neighbours) {
+            System.out.println(neighbour);
+        }
+    }
+
+    @Test
+    void problematicNeighboursTest() {
+        var board = generateProblematicBoard();
         System.out.println("Original");
         System.out.println(board);
         System.out.println("Neighbours");

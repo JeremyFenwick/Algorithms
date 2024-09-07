@@ -66,19 +66,19 @@ public class Board {
         var blankCol = blankIndex % size;
         // top
         if (blankRow - 1 >= 0) {
-            neighbours.add(cloneBoardWithSwap(blankRow, blankCol, blankRow - 1, blankRow));
+            neighbours.add(cloneBoardWithSwap(blankRow, blankCol, blankRow - 1, blankCol));
         }
         // bottom
         if (blankRow + 1 < size) {
-            neighbours.add(cloneBoardWithSwap(blankRow, blankCol, blankRow + 1, blankRow));
+            neighbours.add(cloneBoardWithSwap(blankRow, blankCol, blankRow + 1, blankCol));
         }
         // left
         if (blankCol - 1 >= 0) {
-            neighbours.add(cloneBoardWithSwap(blankRow, blankCol, blankRow, blankRow - 1));
+            neighbours.add(cloneBoardWithSwap(blankRow, blankCol, blankRow, blankCol - 1));
         }
         // right
         if (blankCol + 1 < size) {
-            neighbours.add(cloneBoardWithSwap(blankRow, blankCol, blankRow, blankRow + 1));
+            neighbours.add(cloneBoardWithSwap(blankRow, blankCol, blankRow, blankCol + 1));
         }
     }
 

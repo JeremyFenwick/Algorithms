@@ -29,7 +29,7 @@ public class Solver {
             var neighbours = currentNode.board.neighbors();
             for (var neighbour : neighbours) {
                 // We don't queue a neighbour if its board equals its parent
-                if (neighbour.equals(currentNode.parent.board)) {
+                if (currentNode.parent != null && neighbour.equals(currentNode.parent.board)) {
                     continue;
                 }
                 var newNode = new Node(neighbour, currentNode);
@@ -41,7 +41,7 @@ public class Solver {
     private void generateSolution(Node solutionNode) {
         var workingNode = solutionNode;
         while (workingNode != null) {
-            solution.addFirst(solutionNode.board);
+            solution.addFirst(workingNode.board);
             workingNode = workingNode.parent;
         }
     }
