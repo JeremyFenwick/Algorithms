@@ -148,7 +148,7 @@ public class KdTree {
 
         while (!queue.isEmpty()) {
             var node = queue.removeFirst();
-            StdDraw.setPenRadius(0.01);
+            StdDraw.setPenRadius(0.002);
             if (node.vertical) {
                 StdDraw.setPenColor(Color.red);
                 StdDraw.line(node.data.x(), node.area.ymin(), node.data.x(), node.area.ymax());
@@ -158,7 +158,7 @@ public class KdTree {
                 StdDraw.line(node.area.xmin(), node.data.y(), node.area.xmax(), node.data.y());
             }
             StdDraw.setPenColor(Color.black);
-            StdDraw.setPenRadius(0.02);
+            StdDraw.setPenRadius(0.015);
             StdDraw.point(node.data.x(), node.data.y());
             if (node.left != null) {
                 queue.add(node.left);
