@@ -3,6 +3,7 @@ import edu.princeton.cs.algs4.RectHV;
 import edu.princeton.cs.algs4.StdDraw;
 import java.awt.*;
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 
 public class KdTree {
     private Node root;
@@ -119,17 +120,46 @@ public class KdTree {
         return false;
     }
 
+    public Iterable<Point2D> range(RectHV rectangle) {
+        var resultArray = new ArrayList<Point2D>();
+        var queue = new ArrayDeque<Node>();
+        queue.add(root);
+
+        // Use bfs to traverse the tree
+        while (!queue.isEmpty()) {
+            var node = queue.removeFirst();
+            if (rectangle.contains(node.data)) {
+                resultArray.add(node.data);
+            }
+            if (node.left != null && rectangle.intersects(node.left.area)) {
+                queue.add(node.left);
+            }
+            if (node.right != null && rectangle.intersects(node.right.area)) {
+                queue.add(node.right);
+            }
+        }
+        return resultArray;
+    }
+
     public void draw() {
-        // Draw the lines by bfs
+        // Draw the lines by traversing the tree with bfs
         var queue = new ArrayDeque<Node>();
         queue.add(root);
 
         while (!queue.isEmpty()) {
             var node = queue.removeFirst();
+            StdDraw.setPenRadius(0.01);
+            if (node.vertical) {
+                StdDraw.setPenColor(Color.red);
+                StdDraw.line(node.data.x(), node.area.ymin(), node.data.x(), node.area.ymax());
+            }
+            else {
+                StdDraw.setPenColor(Color.blue);
+                StdDraw.line(node.area.xmin(), node.data.y(), node.area.xmax(), node.data.y());
+            }
             StdDraw.setPenColor(Color.black);
             StdDraw.setPenRadius(0.02);
             StdDraw.point(node.data.x(), node.data.y());
-//            StdDraw.line(node.area.xmin(), node.area.ymin(), node.area.xmax(), node.area.ymax());
             if (node.left != null) {
                 queue.add(node.left);
             }
