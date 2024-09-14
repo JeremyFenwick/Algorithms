@@ -14,14 +14,14 @@ public class KdTree {
     }
 
     private static class Node {
-        public Point2D data;
+        public Point2D point;
         public boolean vertical;
         public Node left;
         public Node right;
         public RectHV area;
 
-        public Node(Point2D point, boolean isVertical, RectHV rectangle) {
-            data = point;
+        public Node(Point2D newPoint, boolean isVertical, RectHV rectangle) {
+            point = newPoint;
             vertical = isVertical;
             area = rectangle;
         }
@@ -30,10 +30,10 @@ public class KdTree {
     // Helper function to determine if we need to go left or right
     private boolean goRight(Node node, Point2D point) {
         if (node.vertical) {
-            return point.x() >= node.data.x();
+            return point.x() >= node.point.x();
         }
         else {
-            return point.y() >= node.data.y();
+            return point.y() >= node.point.y();
         }
     }
 
@@ -47,22 +47,22 @@ public class KdTree {
         var goRight = goRight(parent, point);
         // Right node, parent is a vertical
         if (goRight && parent.vertical) {
-            var rectangle = new RectHV(parent.data.x(), parent.area.ymin(), parent.area.xmax(), parent.area.ymax());
+            var rectangle = new RectHV(parent.point.x(), parent.area.ymin(), parent.area.xmax(), parent.area.ymax());
             parent.right = new Node(point, false, rectangle);
         }
         // Left node, parent is a vertical
         else if (!goRight && parent.vertical) {
-            var rectangle = new RectHV(parent.area.xmin(), parent.area.ymin(), parent.data.x(), parent.area.ymax());
+            var rectangle = new RectHV(parent.area.xmin(), parent.area.ymin(), parent.point.x(), parent.area.ymax());
             parent.left = new Node(point, false, rectangle);
         }
         // Right node, parent is a horizontal
         else if (goRight) {
-            var rectangle = new RectHV(parent.area.xmin(), parent.data.y(), parent.area.xmax(), parent.area.ymax());
+            var rectangle = new RectHV(parent.area.xmin(), parent.point.y(), parent.area.xmax(), parent.area.ymax());
             parent.right = new Node(point, true, rectangle);
         }
         // Left node, parent is a horizontal
         else {
-            var rectangle = new RectHV(parent.area.xmin(), parent.area.ymin(), parent.area.xmax(),  parent.data.y());
+            var rectangle = new RectHV(parent.area.xmin(), parent.area.ymin(), parent.area.xmax(),  parent.point.y());
             parent.left = new Node(point, true, rectangle);
         }
         size++;
@@ -88,7 +88,7 @@ public class KdTree {
         // Identify the correct parent node for insertion
         while (workingNode != null) {
             // Determine if the node already exists
-            if (workingNode.data.equals(newPoint)) {
+            if (workingNode.point.equals(newPoint)) {
                 return;
             }
             // Make the working node the parent
@@ -112,7 +112,7 @@ public class KdTree {
 
         var workingNode = root;
         while (workingNode != null) {
-            if (workingNode.data.equals(target)) {
+            if (workingNode.point.equals(target)) {
                 return true;
             }
             var goRight = goRight(workingNode, target);
@@ -141,8 +141,8 @@ public class KdTree {
         // Use bfs to traverse the tree
         while (!queue.isEmpty()) {
             var node = queue.removeFirst();
-            if (rectangle.contains(node.data)) {
-                resultArray.add(node.data);
+            if (rectangle.contains(node.point)) {
+                resultArray.add(node.point);
             }
             if (node.left != null && rectangle.intersects(node.left.area)) {
                 queue.add(node.left);
@@ -164,15 +164,15 @@ public class KdTree {
             StdDraw.setPenRadius(0.002);
             if (node.vertical) {
                 StdDraw.setPenColor(StdDraw.RED);
-                StdDraw.line(node.data.x(), node.area.ymin(), node.data.x(), node.area.ymax());
+                StdDraw.line(node.point.x(), node.area.ymin(), node.point.x(), node.area.ymax());
             }
             else {
                 StdDraw.setPenColor(StdDraw.BLUE);
-                StdDraw.line(node.area.xmin(), node.data.y(), node.area.xmax(), node.data.y());
+                StdDraw.line(node.area.xmin(), node.point.y(), node.area.xmax(), node.point.y());
             }
             StdDraw.setPenColor(StdDraw.BLACK);
             StdDraw.setPenRadius(0.015);
-            StdDraw.point(node.data.x(), node.data.y());
+            StdDraw.point(node.point.x(), node.point.y());
             if (node.left != null) {
                 queue.add(node.left);
             }
@@ -189,26 +189,27 @@ public class KdTree {
         if (root == null) {
             return null;
         }
-        return traverse(target, root.data, root);
+        return nearestRecurse(target, root.point, root);
     }
 
-    private Point2D traverse(Point2D target, Point2D champion, Node node) {
+    private Point2D nearestRecurse(Point2D target, Point2D champion, Node node) {
         if (node == null) {
             return champion;
         }
+
         var newChampion = champion;
         if (node.area.distanceSquaredTo(target) < champion.distanceSquaredTo(target)) {
             // Potentially replace the point
-            if (node.data.distanceSquaredTo(target) < champion.distanceSquaredTo(target)) {
-                newChampion = node.data;
+            if (node.point.distanceSquaredTo(target) < champion.distanceSquaredTo(target)) {
+                newChampion = node.point;
             }
             if (goRight(node, target)) {
-                newChampion = traverse(target, newChampion, node.right);
-                newChampion = traverse(target, newChampion, node.left);
+                newChampion = nearestRecurse(target, newChampion, node.right);
+                newChampion = nearestRecurse(target, newChampion, node.left);
             }
             else {
-                newChampion = traverse(target, newChampion, node.left);
-                newChampion = traverse(target, newChampion, node.right);
+                newChampion = nearestRecurse(target, newChampion, node.left);
+                newChampion = nearestRecurse(target, newChampion, node.right);
             }
         }
 

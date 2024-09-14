@@ -15,6 +15,6 @@ algorithms and data structures*
 | Queues           | 100 / 100 | ⌛     |
 | Collinear Points | 100 / 100 | 🏁    |
 | 8 Puzzle         | 100 / 100 | 😎    |
-
+| KD Trees         | 100 / 100 | 💰    |
 
 
