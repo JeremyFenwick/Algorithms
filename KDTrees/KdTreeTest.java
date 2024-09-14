@@ -1,4 +1,5 @@
 import edu.princeton.cs.algs4.Point2D;
+import edu.princeton.cs.algs4.RectHV;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -45,5 +46,22 @@ class KdTreeTest {
         var tree = createBasicTree();
         var result = tree.contains(new Point2D(0.1, 0.3));
         assertFalse(result);
+    }
+
+    @Test
+    void rangeTest() {
+        var tree = createBasicTree();
+        var rangeTree = new RectHV(0, 0, .5, 1);
+        var result = tree.range(rangeTree);
+        for (var point : result) {
+            System.out.println(point);
+        }
+    }
+
+    @Test
+    void nearestTest() {
+        var tree = createBasicTree();
+        var result = tree.nearest(new Point2D(0.21, 0.3));
+        assertEquals(result, new Point2D(0.2, 0.3));
     }
 }

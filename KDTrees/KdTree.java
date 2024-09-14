@@ -79,6 +79,10 @@ public class KdTree {
     }
 
     public void insert(Point2D newPoint) {
+        if (newPoint == null) {
+            throw new IllegalArgumentException();
+        }
+
         var workingNode = root;
         Node parentNode = null;
 
@@ -99,11 +103,14 @@ public class KdTree {
                 workingNode = workingNode.left;
             }
         }
-
         createNewNode(parentNode, newPoint);
     }
 
     public boolean contains(Point2D target) {
+        if (target == null) {
+            throw new IllegalArgumentException();
+        }
+
         var workingNode = root;
         while (workingNode != null) {
             if (workingNode.data.equals(target)) {
@@ -121,6 +128,10 @@ public class KdTree {
     }
 
     public Iterable<Point2D> range(RectHV rectangle) {
+        if (rectangle == null) {
+            throw new IllegalArgumentException();
+        }
+
         var resultArray = new ArrayList<Point2D>();
         var queue = new ArrayDeque<Node>();
         queue.add(root);
@@ -167,5 +178,52 @@ public class KdTree {
                 queue.add(node.right);
             }
         }
+    }
+
+    public Point2D nearest(Point2D target) {
+        if (target == null) {
+            throw new IllegalArgumentException();
+        }
+        if (root == null) {
+            return null;
+        }
+
+        var champion = root.data;
+        var championDistance = champion.distanceSquaredTo(target);
+        var queue = new ArrayDeque<Node>();
+        queue.add(root);
+
+        while (!queue.isEmpty()) {
+            var node = queue.removeFirst();
+            var candidate = node.data;
+            var candidateDistance = target.distanceSquaredTo(candidate);
+
+            if (candidateDistance < championDistance) {
+                champion = candidate;
+                championDistance = candidateDistance;
+            }
+
+            var leftAreaDistance = node.left != null ? node.left.area.distanceSquaredTo(target) : Double.POSITIVE_INFINITY;
+            var rightAreaDistance = node.right != null ? node.right.area.distanceSquaredTo(target) : Double.POSITIVE_INFINITY;
+
+            // An optimization is to traverse the closer side first
+            if (leftAreaDistance <= rightAreaDistance) {
+                if (leftAreaDistance < championDistance) {
+                    queue.add(node.left);
+                }
+                if (rightAreaDistance < championDistance) {
+                    queue.add(node.right);
+                }
+            }
+            else {
+                if (rightAreaDistance < championDistance) {
+                    queue.add(node.right);
+                }
+                if (leftAreaDistance < championDistance) {
+                    queue.add(node.left);
+                }
+            }
+        }
+        return champion;
     }
 }
