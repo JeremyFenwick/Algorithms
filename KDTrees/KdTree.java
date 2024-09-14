@@ -1,7 +1,6 @@
 import edu.princeton.cs.algs4.Point2D;
 import edu.princeton.cs.algs4.RectHV;
 import edu.princeton.cs.algs4.StdDraw;
-import java.awt.*;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 
@@ -131,6 +130,9 @@ public class KdTree {
         if (rectangle == null) {
             throw new IllegalArgumentException();
         }
+        if (root == null) {
+            return new ArrayList<Point2D>();
+        }
 
         var resultArray = new ArrayList<Point2D>();
         var queue = new ArrayDeque<Node>();
@@ -161,14 +163,14 @@ public class KdTree {
             var node = queue.removeFirst();
             StdDraw.setPenRadius(0.002);
             if (node.vertical) {
-                StdDraw.setPenColor(Color.red);
+                StdDraw.setPenColor(StdDraw.RED);
                 StdDraw.line(node.data.x(), node.area.ymin(), node.data.x(), node.area.ymax());
             }
             else {
-                StdDraw.setPenColor(Color.blue);
+                StdDraw.setPenColor(StdDraw.BLUE);
                 StdDraw.line(node.area.xmin(), node.data.y(), node.area.xmax(), node.data.y());
             }
-            StdDraw.setPenColor(Color.black);
+            StdDraw.setPenColor(StdDraw.BLACK);
             StdDraw.setPenRadius(0.015);
             StdDraw.point(node.data.x(), node.data.y());
             if (node.left != null) {
@@ -187,43 +189,29 @@ public class KdTree {
         if (root == null) {
             return null;
         }
+        return traverse(target, root.data, root);
+    }
 
-        var champion = root.data;
-        var championDistance = champion.distanceSquaredTo(target);
-        var queue = new ArrayDeque<Node>();
-        queue.add(root);
-
-        while (!queue.isEmpty()) {
-            var node = queue.removeFirst();
-            var candidate = node.data;
-            var candidateDistance = target.distanceSquaredTo(candidate);
-
-            if (candidateDistance < championDistance) {
-                champion = candidate;
-                championDistance = candidateDistance;
+    private Point2D traverse(Point2D target, Point2D champion, Node node) {
+        if (node == null) {
+            return champion;
+        }
+        var newChampion = champion;
+        if (node.area.distanceSquaredTo(target) < champion.distanceSquaredTo(target)) {
+            // Potentially replace the point
+            if (node.data.distanceSquaredTo(target) < champion.distanceSquaredTo(target)) {
+                newChampion = node.data;
             }
-
-            var leftAreaDistance = node.left != null ? node.left.area.distanceSquaredTo(target) : Double.POSITIVE_INFINITY;
-            var rightAreaDistance = node.right != null ? node.right.area.distanceSquaredTo(target) : Double.POSITIVE_INFINITY;
-
-            // An optimization is to traverse the closer side first
-            if (leftAreaDistance <= rightAreaDistance) {
-                if (leftAreaDistance < championDistance) {
-                    queue.add(node.left);
-                }
-                if (rightAreaDistance < championDistance) {
-                    queue.add(node.right);
-                }
+            if (goRight(node, target)) {
+                newChampion = traverse(target, newChampion, node.right);
+                newChampion = traverse(target, newChampion, node.left);
             }
             else {
-                if (rightAreaDistance < championDistance) {
-                    queue.add(node.right);
-                }
-                if (leftAreaDistance < championDistance) {
-                    queue.add(node.left);
-                }
+                newChampion = traverse(target, newChampion, node.left);
+                newChampion = traverse(target, newChampion, node.right);
             }
         }
-        return champion;
+
+        return newChampion;
     }
 }
