@@ -197,22 +197,21 @@ public class KdTree {
             return champion;
         }
 
-        var newChampion = champion;
         if (node.area.distanceSquaredTo(target) < champion.distanceSquaredTo(target)) {
             // Potentially replace the point
             if (node.point.distanceSquaredTo(target) < champion.distanceSquaredTo(target)) {
-                newChampion = node.point;
+                champion = node.point;
             }
             if (goRight(node, target)) {
-                newChampion = nearestRecurse(target, newChampion, node.right);
-                newChampion = nearestRecurse(target, newChampion, node.left);
+                champion = nearestRecurse(target, champion, node.right);
+                champion = nearestRecurse(target, champion, node.left);
             }
             else {
-                newChampion = nearestRecurse(target, newChampion, node.left);
-                newChampion = nearestRecurse(target, newChampion, node.right);
+                champion = nearestRecurse(target, champion, node.left);
+                champion = nearestRecurse(target, champion, node.right);
             }
         }
 
-        return newChampion;
+        return champion;
     }
 }
