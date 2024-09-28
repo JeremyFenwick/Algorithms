@@ -89,12 +89,15 @@ public class WordNet {
         return result.toString();
     }
 
-    // do unit testing of this class
     public static void main(String[] args) {
         var wordnet = new WordNet(args[0], args[1]);
         var trueNoun = wordnet.isNoun("descriptor");
         var falseNoun = wordnet.isNoun("hellokittyworld");
         var distance = wordnet.distance("1850s", "1860s");
         var synset = wordnet.sap("1850s", "1860s");
+        System.out.println(trueNoun);
+        System.out.println(falseNoun);
+        System.out.println(distance);
+        System.out.println(synset);
     }
 }
