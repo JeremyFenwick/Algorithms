@@ -1,5 +1,9 @@
 import edu.princeton.cs.algs4.Digraph;
 import edu.princeton.cs.algs4.In;
+import edu.princeton.cs.algs4.StdIn;
+import edu.princeton.cs.algs4.StdOut;
+
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -15,6 +19,7 @@ public class WordNet {
         var synsetLines = readAllLines(synsetsData);
         nouns = new HashMap<>();
         synsets = new HashSet[synsetLines.length];
+        graph = new Digraph(synsetLines.length);
         loadSynsets(synsetLines);
         loadHypernyms(readAllLines(hypernymsData));
         sap = new SAP(graph);
@@ -47,13 +52,16 @@ public class WordNet {
     private void loadHypernyms(String[] array) {
         for (var line : array) {
             var splitLine = line.split(",");
+            if (splitLine.length < 2 ) {
+                continue;
+            }
             var index = Integer.parseInt(splitLine[0]);
-            var hypernyms = splitLine[0].split(" ");
             var nounSet = synsets[index];
-            for (var hypernym : hypernyms) {
-                graph.addEdge(index, Integer.parseInt(hypernym));
+            for (var i = 1; i < splitLine.length; i++) {
+                var hypernym = Integer.parseInt(splitLine[i]);
+                graph.addEdge(index, hypernym);
                 for (var noun : nounSet) {
-                    nouns.get(noun).add(Integer.parseInt(hypernym));
+                    nouns.get(noun).add(hypernym);
                 }
             }
         }
@@ -83,6 +91,10 @@ public class WordNet {
 
     // do unit testing of this class
     public static void main(String[] args) {
-
+        var wordnet = new WordNet(args[0], args[1]);
+        var trueNoun = wordnet.isNoun("descriptor");
+        var falseNoun = wordnet.isNoun("hellokittyworld");
+        var distance = wordnet.distance("1850s", "1860s");
+        var synset = wordnet.sap("1850s", "1860s");
     }
 }
