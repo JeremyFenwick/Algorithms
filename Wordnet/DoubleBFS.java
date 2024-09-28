@@ -27,6 +27,9 @@ public class DoubleBFS {
             visited = new boolean[graph.V()];
             queue = new ArrayDeque<Integer>();
             for (var vertex : startingVertex) {
+                if (vertex == null) {
+                    throw new IllegalArgumentException();
+                }
                 distance[vertex] = 0;
                 queue.add(vertex);
             }
@@ -39,7 +42,7 @@ public class DoubleBFS {
         var firstBfs = new BfsData(graph, first);
         var secondBfs = new BfsData(graph, second);
 
-        while (!firstBfs.queue.isEmpty() && !secondBfs.queue.isEmpty()) {
+        while (!firstBfs.queue.isEmpty() || !secondBfs.queue.isEmpty()) {
             if (runStep(firstBfs, secondBfs)) {
                 return;
             };
