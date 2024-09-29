@@ -6,7 +6,7 @@ import java.util.Set;
 
 public class WordNet {
     private final HashMap<String, Set<Integer>> nouns;
-    private final Set<String>[] synsets;
+    private final HashMap<Integer, Set<String>> synsets;
     private final Digraph graph;
     private final SAP sap;
 
@@ -14,11 +14,11 @@ public class WordNet {
     public WordNet(String synsetsData, String hypernymsData) {
         var synsetLines = readAllLines(synsetsData);
         nouns = new HashMap<>();
-        synsets = (HashSet<String>[]) new HashSet[synsetLines.length];
-        graph = new Digraph(synsetLines.length);
-        checkRoot();
+        synsets = new HashMap<>();
         loadSynsets(synsetLines);
+        graph = new Digraph(synsets.keySet().size());
         loadHypernyms(readAllLines(hypernymsData));
+        checkRoot();
         sap = new SAP(graph);
     }
 
@@ -34,11 +34,11 @@ public class WordNet {
             var splitLine = line.split(",");
             var index = Integer.parseInt(splitLine[0]);
             var nounList = splitLine[1].split(" ");
-            if (synsets[index] == null) {
-                synsets[index] = new HashSet<String>();
+            if (!synsets.containsKey(index)) {
+                synsets.put(index, new HashSet<String>());
             }
             for (var noun : nounList) {
-                synsets[index].add(noun);
+                synsets.get(index).add(noun);
                 if (!nouns.containsKey(noun)) {
                     nouns.put(noun, new HashSet<Integer>());
                 }
@@ -54,7 +54,6 @@ public class WordNet {
                 continue;
             }
             var index = Integer.parseInt(splitLine[0]);
-            var nounSet = synsets[index];
             for (var i = 1; i < splitLine.length; i++) {
                 var hypernym = Integer.parseInt(splitLine[i]);
                 graph.addEdge(index, hypernym);
@@ -79,7 +78,7 @@ public class WordNet {
 
     public String sap(String nounA, String nounB) {
         var ancestorIndex = sap.ancestor(nouns.get(nounA), nouns.get(nounB));
-        var nounSet = synsets[ancestorIndex];
+        var nounSet = synsets.get(ancestorIndex);
         StringBuilder result = new StringBuilder();
         for (var noun : nounSet) {
             result.append(noun).append(" ");
@@ -88,12 +87,15 @@ public class WordNet {
     }
 
     private void checkRoot() {
+        var rootCount = 0;
         for (int i = 0; i < graph.V(); i++) {
-            if (graph.indegree(i) == 0) {
-                return;
+            if (graph.outdegree(i) == 0) {
+                rootCount ++;
             }
         }
-        throw new IllegalArgumentException();
+        if (rootCount != 1) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public static void main(String[] args) {
