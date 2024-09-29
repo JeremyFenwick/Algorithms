@@ -7,9 +7,10 @@ public class Outcast {
     public Outcast(WordNet wordnet)  {
         this.wordnet = wordnet;
     }
+
     public String outcast(String[] nouns) {
         String candidate = null;
-        var distance = Integer.MAX_VALUE;
+        var distance = Integer.MIN_VALUE;
 
         for (var workingNoun : nouns) {
             var workingDistance = 0;
@@ -19,7 +20,7 @@ public class Outcast {
                 }
                 workingDistance += wordnet.distance(workingNoun, targetNoun);
             }
-            if (workingDistance < distance) {
+            if (workingDistance > distance) {
                 distance = workingDistance;
                 candidate = workingNoun;
             }
@@ -27,6 +28,7 @@ public class Outcast {
 
         return candidate;
     }
+
     public static void main(String[] args)  {
         WordNet wordnet = new WordNet(args[0], args[1]);
         Outcast outcast = new Outcast(wordnet);

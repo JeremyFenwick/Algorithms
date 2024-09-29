@@ -2,105 +2,93 @@ import edu.princeton.cs.algs4.Digraph;
 import java.util.ArrayDeque;
 
 public class DoubleBFS {
-    public int resultDistance, resultVertex;
-    private Digraph graph;
+    private int resultDistance, resultVertex;
+    private final Digraph graph;
 
     public DoubleBFS(Digraph graph) {
         this.graph = graph;
     }
 
-    private class BfsData {
+    private static class BfsData {
         public int[] distance;
-        public boolean[] visited;
+        public boolean[] marked;
         public ArrayDeque<Integer> queue;
 
         public BfsData(Digraph graph, int startingVertex) {
             distance = new int[graph.V()];
-            visited = new boolean[graph.V()];
+            marked = new boolean[graph.V()];
             distance[startingVertex] = 0;
+            marked[startingVertex] = true;
             queue = new ArrayDeque<Integer>();
             queue.addFirst(startingVertex);
         }
 
-        public BfsData(Digraph graph, Iterable<Integer> startingVertex) {
+        public BfsData(Digraph graph, Iterable<Integer> vertices) {
             distance = new int[graph.V()];
-            visited = new boolean[graph.V()];
+            marked = new boolean[graph.V()];
             queue = new ArrayDeque<Integer>();
-            for (var vertex : startingVertex) {
+            for (var vertex : vertices) {
                 if (vertex == null) {
                     throw new IllegalArgumentException();
                 }
                 distance[vertex] = 0;
+                marked[vertex] = true;
                 queue.add(vertex);
             }
         }
     }
 
-    public void lockstepBfs(int first, int second) {
+    public int getResultDistance() {
+        return resultDistance;
+    }
+
+    public int getResultVertex() {
+        return resultVertex;
+    }
+
+    public void bfsSearch(int first, int second) {
+
         resultDistance = -1;
         resultVertex = -1;
         var firstBfs = new BfsData(graph, first);
         var secondBfs = new BfsData(graph, second);
-
-        while (!firstBfs.queue.isEmpty() || !secondBfs.queue.isEmpty()) {
-            if (runStep(firstBfs, secondBfs)) {
-                return;
-            };
-            if (runStep(secondBfs, firstBfs)) {
-                return;
-            };
-        }
+        bfsRoutine(firstBfs);
+        bfsRoutine(secondBfs);
+        findAncestor(firstBfs, secondBfs);
     }
 
-    public void lockstepBfs(Iterable<Integer> first, Iterable<Integer> second) {
+    public void bfsSearch(Iterable<Integer> first, Iterable<Integer> second) {
         resultDistance = -1;
         resultVertex = -1;
         var firstBfs = new BfsData(graph, first);
         var secondBfs = new BfsData(graph, second);
-
-        while (!firstBfs.queue.isEmpty() && !secondBfs.queue.isEmpty()) {
-            if (runStep(firstBfs, secondBfs)) {
-                return;
-            };
-            if (runStep(secondBfs, firstBfs)) {
-                return;
-            };
-        }
+        bfsRoutine(firstBfs);
+        bfsRoutine(secondBfs);
+        findAncestor(firstBfs, secondBfs);
     }
 
-    private boolean runStep(BfsData thisData, BfsData thatData) {
-        var vertex = bfsStep(thisData, thatData);
-        if (vertex >= 0) {
-            resultDistance = thisData.distance[vertex] + thatData.distance[vertex];
-            resultVertex = vertex;
-            return true;
-        }
-        return false;
-    }
-
-    private int bfsStep(BfsData thisData, BfsData thatData) {
-        if (thisData.queue.isEmpty()) {
-            return -1;
-        }
-        // If we have already visited this vertex, return
-        int vertex = thisData.queue.removeFirst();
-        if (thisData.visited[vertex]) {
-            return -1;
-        }
-        else {
-            thisData.visited[vertex] = true;
-        }
-        // Check if we have a candidate ancestor, if so return it
-        if (thatData.visited[vertex]) {
-            return vertex;
-        }
-        // Else add all neighbours to the queue and set the distances
-        else {
+    private void bfsRoutine(BfsData bfsData) {
+        while (!bfsData.queue.isEmpty()) {
+            int vertex = bfsData.queue.removeFirst();
             for (var neighbour : graph.adj(vertex)) {
-                thisData.distance[neighbour] = thisData.distance[vertex] + 1;
-                thisData.queue.addLast(neighbour);
+                if (!bfsData.marked[neighbour]) {
+                    bfsData.distance[neighbour] = bfsData.distance[vertex] + 1;
+                    bfsData.queue.addLast(neighbour);
+                    bfsData.marked[neighbour] = true;
+                }
             }
-            return -1;
+        }
+    }
+
+    private void findAncestor(BfsData firstBfs, BfsData secondBfs) {
+        for (var i = 0; i < firstBfs.distance.length; i++) {
+            if (firstBfs.marked[i] && secondBfs.marked[i]) {
+                var candidateDistance = firstBfs.distance[i] + secondBfs.distance[i];
+                if (candidateDistance < resultDistance || resultDistance == -1) {
+                    resultDistance = candidateDistance;
+                    resultVertex = i;
+                }
+            }
         }
     }
 }

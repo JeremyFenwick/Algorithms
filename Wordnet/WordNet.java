@@ -1,25 +1,22 @@
 import edu.princeton.cs.algs4.Digraph;
 import edu.princeton.cs.algs4.In;
-import edu.princeton.cs.algs4.StdIn;
-import edu.princeton.cs.algs4.StdOut;
-
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
 public class WordNet {
-    private HashMap<String, Set<Integer>> nouns;
-    private Set<String>[] synsets;
-    private Digraph graph;
-    private SAP sap;
+    private final HashMap<String, Set<Integer>> nouns;
+    private final Set<String>[] synsets;
+    private final Digraph graph;
+    private final SAP sap;
 
     // constructor takes the name of the two input files
     public WordNet(String synsetsData, String hypernymsData) {
         var synsetLines = readAllLines(synsetsData);
         nouns = new HashMap<>();
-        synsets = new HashSet[synsetLines.length];
+        synsets = (HashSet<String>[]) new HashSet[synsetLines.length];
         graph = new Digraph(synsetLines.length);
+        checkRoot();
         loadSynsets(synsetLines);
         loadHypernyms(readAllLines(hypernymsData));
         sap = new SAP(graph);
@@ -45,6 +42,7 @@ public class WordNet {
                 if (!nouns.containsKey(noun)) {
                     nouns.put(noun, new HashSet<Integer>());
                 }
+                nouns.get(noun).add(index);
             }
         }
     }
@@ -60,9 +58,6 @@ public class WordNet {
             for (var i = 1; i < splitLine.length; i++) {
                 var hypernym = Integer.parseInt(splitLine[i]);
                 graph.addEdge(index, hypernym);
-                for (var noun : nounSet) {
-                    nouns.get(noun).add(hypernym);
-                }
             }
         }
     }
@@ -72,6 +67,9 @@ public class WordNet {
     }
 
     public boolean isNoun(String word) {
+        if (word == null) {
+            throw new IllegalArgumentException();
+        }
         return nouns.containsKey(word);
     }
 
@@ -89,15 +87,18 @@ public class WordNet {
         return result.toString();
     }
 
+    private void checkRoot() {
+        for (int i = 0; i < graph.V(); i++) {
+            if (graph.indegree(i) == 0) {
+                return;
+            }
+        }
+        throw new IllegalArgumentException();
+    }
+
     public static void main(String[] args) {
         var wordnet = new WordNet(args[0], args[1]);
-        var trueNoun = wordnet.isNoun("descriptor");
-        var falseNoun = wordnet.isNoun("hellokittyworld");
-        var distance = wordnet.distance("1850s", "1860s");
-        var synset = wordnet.sap("1850s", "1860s");
-        System.out.println(trueNoun);
-        System.out.println(falseNoun);
+        var distance = wordnet.distance("a", "o");
         System.out.println(distance);
-        System.out.println(synset);
     }
 }
