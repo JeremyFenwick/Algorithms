@@ -47,7 +47,6 @@ public class DoubleBFS {
     }
 
     public void bfsSearch(int first, int second) {
-
         resultDistance = -1;
         resultVertex = -1;
         var firstBfs = new BfsData(graph, first);
