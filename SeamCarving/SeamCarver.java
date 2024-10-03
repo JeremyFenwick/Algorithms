@@ -1,5 +1,6 @@
 import edu.princeton.cs.algs4.Picture;
 import java.awt.Color;
+import java.util.Arrays;
 
 public class SeamCarver {
     private Picture picture;
@@ -7,11 +8,7 @@ public class SeamCarver {
     private double[] tEnergies;
 
     public SeamCarver(Picture image) {
-        picture = image;
-        energies = new double[width() * height()];
-        tEnergies = new double[width() * height()];
-        loadEnergies();
-        transposeEnergies();
+        loadPicture(image);
     }
 
     public Picture picture() {
@@ -26,6 +23,52 @@ public class SeamCarver {
         return picture.height();
     }
 
+    public int[] findVerticalSeam() {
+        var memo = memoBuilder(energies, width(), height());
+        return seamFinder(memo, width(), height());
+    }
+
+    public int[] findHorizontalSeam() {
+        var memo = memoBuilder(tEnergies, height(), width());
+        return seamFinder(memo, height(), width());
+    }
+
+    public void removeVerticalSeam(int[] seam) {
+        var newPicture = new Picture(width() - 1, height());
+        var nextColumn = 0;
+        for (int row = 0; row < height(); row++) {
+            for (int col = 0; col < width() - 1; col++) {
+                var location = new Coordinate(col, row, width(), height());
+                var pixel = picture.get(col, row);
+                if (seam[row] != location.index) {
+                    newPicture.set(nextColumn, row, pixel);
+                    nextColumn++;
+                }
+            }
+            // Reset the column index for the next row
+            nextColumn = 0;
+        }
+        loadPicture(newPicture);
+    }
+
+    public void removeHorizontalSeam(int[] seam) {
+        var newPicture = new Picture(width(), height() - 1);
+        var nextRow = 0;
+        for (int col = 0; col < width(); col++) {
+            for (int row = 0; row < height() - 1; row++) {
+                var location = new Coordinate(col, row, width(), height());
+                var pixel = picture.get(col, row);
+                if (seam[col] != location.index) {
+                    newPicture.set(col, nextRow, pixel);
+                    nextRow++;
+                }
+            }
+            // Reset the row index for the next column
+            nextRow = 0;
+        }
+        loadPicture(newPicture);
+    }
+
     public double energy(int col, int row) {
         if (col < 0 || row < 0 || col >= width() || row >= height()) {
             throw new IllegalArgumentException();
@@ -38,6 +81,14 @@ public class SeamCarver {
         var left = picture.get(col - 1, row );
         var right = picture.get(col + 1, row);
         return Math.sqrt(gradient(top, bottom) + gradient(left, right));
+    }
+
+    private void loadPicture(Picture picture) {
+        this.picture = picture;
+        energies = new double[width() * height()];
+        tEnergies = new double[width() * height()];
+        loadEnergies();
+        transposeEnergies();
     }
 
     private double gradient(Color first, Color second) {
@@ -63,11 +114,11 @@ public class SeamCarver {
         }
     }
 
-    private double minBelow(int col, int row, double[] memo) {
+    private double minBelow(int col, int row, double[] memo, int width, int height) {
         var result = Double.POSITIVE_INFINITY;
-        var bottomLeft = new Coordinate(col - 1, row + 1, width(), height());
-        var bottom = new Coordinate(col, row + 1, width(), height());
-        var bottomRight = new Coordinate(col + 1, row + 1, width(), height());
+        var bottomLeft = new Coordinate(col - 1, row + 1, width, height);
+        var bottom = new Coordinate(col, row + 1, width, height);
+        var bottomRight = new Coordinate(col + 1, row + 1, width, height);
 
         if (bottomLeft.isInBounds() && memo[bottomLeft.index] < result) {
             result = memo[bottomLeft.index];
@@ -88,7 +139,7 @@ public class SeamCarver {
         for (int row = height - 1; row >= 0; row--) {
             for (int col = 0; col < width; col++) {
                 var location = new Coordinate(col, row, width, height);
-                var minEnergyBelow = minBelow(col, row, memo);
+                var minEnergyBelow = minBelow(col, row, memo, width, height);
                 memo[location.index] = seamEnergies[location.index] + minEnergyBelow;
             }
         }
@@ -96,29 +147,37 @@ public class SeamCarver {
     }
 
     private int[] seamFinder(double[] memo, int width, int height) {
-        // Traverse through the memo, bottom to top and select the lowest energy path
         var seam = new int[height];
-        for (int row = height - 1; row >= 0; row--) {
-            // Give the seam array the first column of the row to start
-            seam[row] = new Coordinate(0, row, width, height).index;
-            for (int col = 1; col < width; col++) {
-                var currentLocation = new Coordinate(col, row, width, height);
-                var seamIndex = seam[row];
-                if (memo[currentLocation.index] < memo[seamIndex]) {
-                    seam[row] = currentLocation.index;
-                }
+        Arrays.fill(seam, -1);
+        seam[0] = findLowestValueTopIndex(memo, width, height);
+        for (int row = 1; row < height; row++) {
+            var column = new Coordinate(seam[row - 1], width, height).column;
+            var seamIndex = seam[row];
+            var bottomLeft = new Coordinate(column - 1, row, width, height);
+            var bottom = new Coordinate(column, row, width, height);
+            var bottomRight = new Coordinate(column + 1, row, width, height);
+
+            if (bottomLeft.isInBounds() && (seam[row] == -1 || memo[bottomLeft.index] < memo[seamIndex])) {
+                seam[row] = bottomLeft.index;
+            }
+            if (bottom.isInBounds() && (seam[row] == -1 || memo[bottom.index] < memo[seamIndex])) {
+                seam[row] = bottom.index;
+            }
+            if (bottomRight.isInBounds() && (seam[row] == -1 || memo[bottomRight.index] < memo[seamIndex])) {
+                seam[row] = bottomRight.index;
             }
         }
         return seam;
     }
 
-    public int[] findVerticalSeam() {
-        var memo = memoBuilder(energies, width(), height());
-        return seamFinder(memo, width(), height());
-    }
-
-    public int[] findHorizontalSeam() {
-        var memo = memoBuilder(tEnergies, height(), width());
-        return seamFinder(memo, width(), height());
+    private int findLowestValueTopIndex(double[] memo, int width, int height) {
+        var index = 0;
+        for (int col = 1; col < width; col++) {
+            var location = new Coordinate(col, 0, width, height);
+            if (memo[location.index] < memo[index]) {
+                index = location.index;
+            }
+        }
+        return index;
     }
 }

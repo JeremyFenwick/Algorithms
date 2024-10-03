@@ -61,4 +61,20 @@ class SeamCarverTests {
         var seamCarver = new SeamCarver(picture);
         var seam = seamCarver.findHorizontalSeam();
     }
+
+    @Test
+    void removeVerticalSeam() {
+        var picture = samplePicture();
+        var seamCarver = new SeamCarver(picture);
+        var seam = seamCarver.findVerticalSeam();
+        seamCarver.removeVerticalSeam(seam);
+    }
+
+    @Test
+    void removeHorizontalSeam() {
+        var picture = samplePicture();
+        var seamCarver = new SeamCarver(picture);
+        var seam = seamCarver.findHorizontalSeam();
+        seamCarver.removeHorizontalSeam(seam);
+    }
 }
