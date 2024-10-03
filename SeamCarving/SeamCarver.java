@@ -30,7 +30,9 @@ public class SeamCarver {
 
     public int[] findHorizontalSeam() {
         var memo = memoBuilder(tEnergies, height(), width());
-        return seamFinder(memo, height(), width());
+        var seam = seamFinder(memo, height(), width());
+        var tSeam = transposeSeam(seam, height(), width());
+        return tSeam;
     }
 
     public void removeVerticalSeam(int[] seam) {
@@ -152,18 +154,17 @@ public class SeamCarver {
         seam[0] = findLowestValueTopIndex(memo, width, height);
         for (int row = 1; row < height; row++) {
             var column = new Coordinate(seam[row - 1], width, height).column;
-            var seamIndex = seam[row];
             var bottomLeft = new Coordinate(column - 1, row, width, height);
             var bottom = new Coordinate(column, row, width, height);
             var bottomRight = new Coordinate(column + 1, row, width, height);
 
-            if (bottomLeft.isInBounds() && (seam[row] == -1 || memo[bottomLeft.index] < memo[seamIndex])) {
+            if (bottomLeft.isInBounds() && (seam[row] == -1 || memo[bottomLeft.index] < memo[seam[row]])) {
                 seam[row] = bottomLeft.index;
             }
-            if (bottom.isInBounds() && (seam[row] == -1 || memo[bottom.index] < memo[seamIndex])) {
+            if (bottom.isInBounds() && (seam[row] == -1 || memo[bottom.index] < memo[seam[row]])) {
                 seam[row] = bottom.index;
             }
-            if (bottomRight.isInBounds() && (seam[row] == -1 || memo[bottomRight.index] < memo[seamIndex])) {
+            if (bottomRight.isInBounds() && (seam[row] == -1 || memo[bottomRight.index] < memo[seam[row]])) {
                 seam[row] = bottomRight.index;
             }
         }
@@ -179,5 +180,13 @@ public class SeamCarver {
             }
         }
         return index;
+    }
+
+    private int[] transposeSeam(int[] seam, int width, int height) {
+        var tSeam = new int[seam.length];
+        for (int i = 0; i < seam.length; i++) {
+            tSeam[i] = new Coordinate(seam[i], width, height).transpose().index;
+        }
+        return tSeam;
     }
 }
