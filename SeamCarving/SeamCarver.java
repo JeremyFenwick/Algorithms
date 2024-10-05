@@ -25,14 +25,23 @@ public class SeamCarver {
 
     public int[] findVerticalSeam() {
         var memo = memoBuilder(energies, width(), height());
-        return seamFinder(memo, width(), height());
+        var seam = seamFinder(memo, width(), height());
+        var result = new int[seam.length];
+        for (int i = 0; i < seam.length; i++) {
+            result[i] = seam[i].column;
+        }
+        return result;
     }
 
     public int[] findHorizontalSeam() {
         var memo = memoBuilder(tEnergies, height(), width());
-        var seam = seamFinder(memo, height(), width());
-        var tSeam = transposeSeam(seam, height(), width());
-        return tSeam;
+        var tSeam = seamFinder(memo, height(), width());
+        var seam = transposeSeam(tSeam, height(), width());
+        var result = new int[seam.length];
+        for (int i = 0; i < seam.length; i++) {
+            result[i] = seam[i].row;
+        }
+        return result;
     }
 
     public void removeVerticalSeam(int[] seam) {
@@ -42,7 +51,7 @@ public class SeamCarver {
             for (int col = 0; col < width() - 1; col++) {
                 var location = new Coordinate(col, row, width(), height());
                 var pixel = picture.get(col, row);
-                if (seam[row] != location.index) {
+                if (seam[row] != location.column) {
                     newPicture.set(nextColumn, row, pixel);
                     nextColumn++;
                 }
@@ -60,7 +69,7 @@ public class SeamCarver {
             for (int row = 0; row < height() - 1; row++) {
                 var location = new Coordinate(col, row, width(), height());
                 var pixel = picture.get(col, row);
-                if (seam[col] != location.index) {
+                if (seam[col] != location.row) {
                     newPicture.set(col, nextRow, pixel);
                     nextRow++;
                 }
@@ -148,44 +157,43 @@ public class SeamCarver {
         return memo;
     }
 
-    private int[] seamFinder(double[] memo, int width, int height) {
-        var seam = new int[height];
-        Arrays.fill(seam, -1);
+    private Coordinate[] seamFinder(double[] memo, int width, int height) {
+        var seam = new Coordinate[height];
         seam[0] = findLowestValueTopIndex(memo, width, height);
         for (int row = 1; row < height; row++) {
-            var column = new Coordinate(seam[row - 1], width, height).column;
+            var column = new Coordinate(seam[row - 1].column, width, height).column;
             var bottomLeft = new Coordinate(column - 1, row, width, height);
             var bottom = new Coordinate(column, row, width, height);
             var bottomRight = new Coordinate(column + 1, row, width, height);
 
-            if (bottomLeft.isInBounds() && (seam[row] == -1 || memo[bottomLeft.index] < memo[seam[row]])) {
-                seam[row] = bottomLeft.index;
+            if (bottomLeft.isInBounds() && (seam[row] == null || memo[bottomLeft.index] < memo[seam[row].index])) {
+                seam[row] = bottomLeft;
             }
-            if (bottom.isInBounds() && (seam[row] == -1 || memo[bottom.index] < memo[seam[row]])) {
-                seam[row] = bottom.index;
+            if (bottom.isInBounds() && (seam[row] == null || memo[bottom.index] < memo[seam[row].index])) {
+                seam[row] = bottom;
             }
-            if (bottomRight.isInBounds() && (seam[row] == -1 || memo[bottomRight.index] < memo[seam[row]])) {
-                seam[row] = bottomRight.index;
+            if (bottomRight.isInBounds() && (seam[row] == null || memo[bottomRight.index] < memo[seam[row].index])) {
+                seam[row] = bottomRight;
             }
         }
         return seam;
     }
 
-    private int findLowestValueTopIndex(double[] memo, int width, int height) {
-        var index = 0;
-        for (int col = 1; col < width; col++) {
+    private Coordinate findLowestValueTopIndex(double[] memo, int width, int height) {
+        Coordinate candidate = null;
+        for (int col = 0; col < width; col++) {
             var location = new Coordinate(col, 0, width, height);
-            if (memo[location.index] < memo[index]) {
-                index = location.index;
+            if (candidate == null || memo[location.index] < memo[candidate.index]) {
+                candidate = location;
             }
         }
-        return index;
+        return candidate;
     }
 
-    private int[] transposeSeam(int[] seam, int width, int height) {
-        var tSeam = new int[seam.length];
+    private Coordinate[] transposeSeam(Coordinate[] seam, int width, int height) {
+        var tSeam = new Coordinate[seam.length];
         for (int i = 0; i < seam.length; i++) {
-            tSeam[i] = new Coordinate(seam[i], width, height).transpose().index;
+            tSeam[i] = new Coordinate(seam[i].index, width, height).transpose();
         }
         return tSeam;
     }
