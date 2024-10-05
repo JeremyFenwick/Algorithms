@@ -1,5 +1,6 @@
 import edu.princeton.cs.algs4.Picture;
-import java.awt.Color;
+
+import java.awt.*;
 
 public class SeamCarver {
     private Picture picture;
@@ -69,7 +70,7 @@ public class SeamCarver {
     }
 
     public void removeHorizontalSeam(int[] seam) {
-        if (seam == null || seam.length != width()  || height() <= 1) {
+        if (seam == null || seam.length != width() || height() <= 1) {
             throw new IllegalArgumentException();
         }
         validateSeam(seam);
@@ -99,7 +100,7 @@ public class SeamCarver {
         }
         var top = picture.get(col, row - 1);
         var bottom = picture.get(col, row + 1);
-        var left = picture.get(col - 1, row );
+        var left = picture.get(col - 1, row);
         var right = picture.get(col + 1, row);
         return Math.sqrt(gradient(top, bottom) + gradient(left, right));
     }
