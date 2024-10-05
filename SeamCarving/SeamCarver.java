@@ -1,6 +1,5 @@
 import edu.princeton.cs.algs4.Picture;
 import java.awt.Color;
-import java.util.Arrays;
 
 public class SeamCarver {
     private Picture picture;
@@ -105,8 +104,8 @@ public class SeamCarver {
         return Math.sqrt(gradient(top, bottom) + gradient(left, right));
     }
 
-    private void loadPicture(Picture picture) {
-        this.picture = new Picture(picture);
+    private void loadPicture(Picture image) {
+        this.picture = new Picture(image);
     }
 
     private double gradient(Color first, Color second) {
