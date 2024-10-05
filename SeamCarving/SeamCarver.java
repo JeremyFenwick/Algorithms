@@ -4,15 +4,16 @@ import java.util.Arrays;
 
 public class SeamCarver {
     private Picture picture;
-    private double[] energies;
-    private double[] tEnergies;
 
     public SeamCarver(Picture image) {
+        if (image == null) {
+            throw new IllegalArgumentException();
+        }
         loadPicture(image);
     }
 
     public Picture picture() {
-        return picture;
+        return new Picture(picture);
     }
 
     public int width() {
@@ -24,6 +25,7 @@ public class SeamCarver {
     }
 
     public int[] findVerticalSeam() {
+        var energies = loadEnergies();
         var memo = memoBuilder(energies, width(), height());
         var seam = seamFinder(memo, width(), height());
         var result = new int[seam.length];
@@ -34,6 +36,7 @@ public class SeamCarver {
     }
 
     public int[] findHorizontalSeam() {
+        var tEnergies = loadTransposedEnergies();
         var memo = memoBuilder(tEnergies, height(), width());
         var tSeam = seamFinder(memo, height(), width());
         var seam = transposeSeam(tSeam, height(), width());
@@ -45,10 +48,14 @@ public class SeamCarver {
     }
 
     public void removeVerticalSeam(int[] seam) {
+        if (seam == null || seam.length != height() || width() <= 1) {
+            throw new IllegalArgumentException();
+        }
+        validateSeam(seam);
         var newPicture = new Picture(width() - 1, height());
         var nextColumn = 0;
         for (int row = 0; row < height(); row++) {
-            for (int col = 0; col < width() - 1; col++) {
+            for (int col = 0; col < width(); col++) {
                 var location = new Coordinate(col, row, width(), height());
                 var pixel = picture.get(col, row);
                 if (seam[row] != location.column) {
@@ -63,10 +70,14 @@ public class SeamCarver {
     }
 
     public void removeHorizontalSeam(int[] seam) {
+        if (seam == null || seam.length != width()  || height() <= 1) {
+            throw new IllegalArgumentException();
+        }
+        validateSeam(seam);
         var newPicture = new Picture(width(), height() - 1);
         var nextRow = 0;
         for (int col = 0; col < width(); col++) {
-            for (int row = 0; row < height() - 1; row++) {
+            for (int row = 0; row < height(); row++) {
                 var location = new Coordinate(col, row, width(), height());
                 var pixel = picture.get(col, row);
                 if (seam[col] != location.row) {
@@ -95,11 +106,7 @@ public class SeamCarver {
     }
 
     private void loadPicture(Picture picture) {
-        this.picture = picture;
-        energies = new double[width() * height()];
-        tEnergies = new double[width() * height()];
-        loadEnergies();
-        transposeEnergies();
+        this.picture = new Picture(picture);
     }
 
     private double gradient(Color first, Color second) {
@@ -109,20 +116,26 @@ public class SeamCarver {
         return Math.pow(redSum, 2) + Math.pow(greenSum, 2) + Math.pow(blueSum, 2);
     }
 
-    private void loadEnergies() {
+    private double[] loadEnergies() {
+        var energies = new double[width() * height()];
         for (int row = 0; row < height(); row++) {
             for (int col = 0; col < width(); col++) {
                 var location = new Coordinate(col, row, width(), height());
                 energies[location.index] = energy(col, row);
             }
         }
+        return energies;
     }
 
-    private void transposeEnergies() {
-        for (int i = 0; i < energies.length; i++) {
-            var tLocation = new Coordinate(i, width(), height()).transpose();
-            tEnergies[tLocation.index] = energies[i];
+    private double[] loadTransposedEnergies() {
+        var tEnergies = new double[width() * height()];
+        for (int row = 0; row < height(); row++) {
+            for (int col = 0; col < width(); col++) {
+                var location = new Coordinate(col, row, width(), height()).transpose();
+                tEnergies[location.index] = energy(col, row);
+            }
         }
+        return tEnergies;
     }
 
     private double minBelow(int col, int row, double[] memo, int width, int height) {
@@ -196,5 +209,15 @@ public class SeamCarver {
             tSeam[i] = new Coordinate(seam[i].index, width, height).transpose();
         }
         return tSeam;
+    }
+
+    private void validateSeam(int[] seam) {
+        var lastSeam = seam[0];
+        for (var integer : seam) {
+            if (integer - lastSeam < -1 || integer - lastSeam > 1) {
+                throw new IllegalArgumentException();
+            }
+            lastSeam = integer;
+        }
     }
 }

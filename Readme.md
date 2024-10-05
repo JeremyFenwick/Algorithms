@@ -17,5 +17,5 @@ algorithms and data structures*
 | 8 Puzzle         | 100 / 100 | 😎    |
 | KD Trees         | 100 / 100 | 💰    |
 | Wordnet          | 100 / 100 | 🕰️   |
-
+| Seam Carving     | 100 / 100 | 💵    |
 
