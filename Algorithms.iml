@@ -8,6 +8,9 @@
     <content url="file://$MODULE_DIR$/8Puzzle">
       <sourceFolder url="file://$MODULE_DIR$/8Puzzle" isTestSource="false" />
     </content>
+    <content url="file://$MODULE_DIR$/BaseballElimination">
+      <sourceFolder url="file://$MODULE_DIR$/BaseballElimination" isTestSource="false" />
+    </content>
     <content url="file://$MODULE_DIR$/CollinearPoints">
       <sourceFolder url="file://$MODULE_DIR$/CollinearPoints" isTestSource="false" />
     </content>
