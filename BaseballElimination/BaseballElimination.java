@@ -44,7 +44,7 @@ public class BaseballElimination {
         var placement = teams.get(team);
         var opponentIndex = teams.get(opponent);
         var index = startIndex(placement);
-        return data[index + 2 + opponentIndex];
+        return data[index + 3 + opponentIndex];
     }
 
     private String[] readAllLines(String filename) {

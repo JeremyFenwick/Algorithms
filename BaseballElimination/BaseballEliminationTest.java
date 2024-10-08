@@ -28,4 +28,18 @@ class BaseballEliminationTest {
         var remaining = bb.remaining("Montreal");
         assertEquals(3, remaining);
     }
+
+    @Test
+    void atlantaVsNewYork() {
+        var bb = new BaseballElimination("teams4.txt");
+        var remaining = bb.against("Atlanta", "New_York");
+        assertEquals(6, remaining);
+    }
+
+    @Test
+    void montrealVsPhiladelphia() {
+        var bb = new BaseballElimination("teams4.txt");
+        var remaining = bb.against("Montreal", "Philadelphia");
+        assertEquals(2, remaining);
+    }
 }
