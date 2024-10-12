@@ -75,13 +75,14 @@ class BaseballEliminationTest {
     void teams4b() {
         var bb = new BaseballElimination("teams4b.txt");
         var result = bb.isEliminated("Hufflepuff");
+        var result2 = bb.isEliminated("Hufflepuff");
         var certs = bb.certificateOfElimination("Hufflepuff");
     }
 
     @Test
     void testEquality() {
         var bb = new BaseballElimination("teams4.txt");
-        var name = "Atlanta";
+        var name = "Montreal";
         var nameCopy = new String(name);
         var result = bb.isEliminated(name);
         var copyResult = bb.isEliminated(nameCopy);

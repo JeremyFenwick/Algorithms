@@ -73,7 +73,7 @@ public class BaseballElimination {
             throw new IllegalArgumentException();
         }
         if (team.equals(cacheTeam)) {
-            return cacheFlow < maxFlow;
+            return !certificates.isEmpty();
         }
         else {
             certificates.clear();
