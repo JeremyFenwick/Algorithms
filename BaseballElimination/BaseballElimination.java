@@ -8,7 +8,7 @@ import java.util.HashMap;
 public class BaseballElimination {
     private final HashMap<String, Integer> teams;
     private final int[] data;
-    private int maxFlow = 0;
+    private int maxFlow;
     private double cacheFlow;
     private String cacheTeam = null;
     private final ArrayList<String> certificates;
@@ -20,6 +20,7 @@ public class BaseballElimination {
         data = new int[(numberOfTeams * 3) + (numberOfTeams * numberOfTeams)];
         certificates = new ArrayList<String>();
         cacheFlow = 0;
+        maxFlow = 0;
         loadData(lines, numberOfTeams);
     }
 
