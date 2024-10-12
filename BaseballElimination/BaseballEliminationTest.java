@@ -42,4 +42,48 @@ class BaseballEliminationTest {
         var remaining = bb.against("Montreal", "Philadelphia");
         assertEquals(2, remaining);
     }
+
+    @Test
+    void createNetwork() {
+        var bb = new BaseballElimination("teams4.txt");
+        var result = bb.isEliminated("Montreal");
+        var certs = bb.certificateOfElimination("Montreal");
+    }
+
+    @Test
+    void createSimpleNetwork() {
+        var bb = new BaseballElimination("simple.txt");
+        var result = bb.isEliminated("Loser");
+        var certs = bb.certificateOfElimination("Loser");
+    }
+
+    @Test
+    void teams10() {
+        var bb = new BaseballElimination("teams10.txt");
+        var result = bb.isEliminated("Atlanta");
+        var certs = bb.certificateOfElimination("Atlanta");
+    }
+
+    @Test
+    void teams48() {
+        var bb = new BaseballElimination("teams48.txt");
+        var result = bb.isEliminated("Team0");
+        var certs = bb.certificateOfElimination("Team0");
+    }
+
+    @Test
+    void teams4b() {
+        var bb = new BaseballElimination("teams4b.txt");
+        var result = bb.isEliminated("Hufflepuff");
+        var certs = bb.certificateOfElimination("Hufflepuff");
+    }
+
+    @Test
+    void testEquality() {
+        var bb = new BaseballElimination("teams4.txt");
+        var name = "Atlanta";
+        var nameCopy = new String(name);
+        var result = bb.isEliminated(name);
+        var copyResult = bb.isEliminated(nameCopy);
+    }
 }
