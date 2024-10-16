@@ -12,4 +12,12 @@ class RTrieTest {
         var prefix = dict.search("HEL");
         var nonExistingWord = dict.search("NO");
     }
+
+    @Test
+    void qEntry() {
+        var dict = new RTrie(26, 10);
+        dict.put("QUICK", 2);
+        var quickResult = dict.search("QUICK");
+        var prefixResult = dict.search("Q");
+    }
 }

@@ -19,4 +19,4 @@ algorithms and data structures*
 | Wordnet              | 100 / 100 | 🕰️   |
 | Seam Carving         | 100 / 100 | 💵    |
 | Baseball Elimination | 100 / 100 | 😤    |
-
+| Boggle               | 100 / 100 | 🤌    |

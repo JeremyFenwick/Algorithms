@@ -1,19 +1,19 @@
 public class RTrie {
     private final int R, toZero;
-    private final Node root;
+    private final BoggleNode root;
 
     public RTrie(int R, int toZero) {
         this.R = R;
         this.toZero = toZero;
-        root = new Node(R);
+        root = new BoggleNode(R);
     }
 
-    private static class Node {
+    public static class BoggleNode {
         public int value;
-        public Node[] next;
+        public BoggleNode[] next;
 
-        public Node(int size) {
-            next = new Node[size];
+        public BoggleNode(int size) {
+            next = new BoggleNode[size];
             value = 0;
         }
     }
@@ -22,17 +22,20 @@ public class RTrie {
         public boolean prefix;
         public boolean word;
         public int score;
+        public BoggleNode node;
 
-        public Result (boolean prefix, boolean word, int score) {
+        public Result (boolean prefix, boolean word, int score, BoggleNode node) {
             this.prefix = prefix;
             this.word = word;
             this.score = score;
+            this.node = node;
         }
 
-        public Result (boolean prefix, boolean word) {
+        public Result (boolean prefix, boolean word, BoggleNode node) {
             this.prefix = prefix;
             this.word = word;
             score = -1;
+            this.node = node;
         }
     }
 
@@ -43,7 +46,7 @@ public class RTrie {
             // For example, - 10 of 'A' is 0
             var currentIndex = Character.getNumericValue(currentCharacter) - toZero;
             if (workingNode.next[currentIndex] == null) {
-                workingNode.next[currentIndex] = new Node(R);
+                workingNode.next[currentIndex] = new BoggleNode(R);
             }
             workingNode = workingNode.next[currentIndex];
         }
@@ -58,17 +61,52 @@ public class RTrie {
             var currentIndex = Character.getNumericValue(currentCharacter) - toZero;
             // If the trie index is null, the prefix is not valid
             if (workingNode.next[currentIndex] == null) {
-                return new Result(false, false);
+                return new Result(false, false, null);
             }
             workingNode = workingNode.next[currentIndex];
         }
         // If there is a value here we have a word
         if (workingNode.value > 0) {
-            return new Result(true, true, workingNode.value);
+            return new Result(true, true, workingNode.value, workingNode);
         }
         // Else we have a prefix
         else {
-            return new Result(true, false);
+            return new Result(true, false, workingNode);
+        }
+    }
+
+    public Result search(char character, BoggleNode node) {
+        if (node == null) {
+            return search(character);
+        }
+        var currentIndex = Character.getNumericValue(character) - toZero;
+        if (node.next[currentIndex] == null) {
+            return new Result(false, false, null);
+        }
+        var nextNode = node.next[currentIndex];
+        // If there is a value here we have a word
+        if (nextNode.value > 0) {
+            return new Result(true, true, nextNode.value, nextNode);
+        }
+        // Else we have a prefix
+        else {
+            return new Result(true, false, nextNode);
+        }
+    }
+
+    public Result search(char character) {
+        var currentIndex = Character.getNumericValue(character) - toZero;
+        if (root.next[currentIndex] == null) {
+            return new Result(false, false, null);
+        }
+        var nextNode = root.next[currentIndex];
+        // If there is a value here we have a word
+        if (nextNode.value > 0) {
+            return new Result(true, true, nextNode.value, nextNode);
+        }
+        // Else we have a prefix
+        else {
+            return new Result(true, false, nextNode);
         }
     }
 }
