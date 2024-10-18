@@ -14,6 +14,9 @@
     <content url="file://$MODULE_DIR$/Boggle">
       <sourceFolder url="file://$MODULE_DIR$/Boggle" isTestSource="false" />
     </content>
+    <content url="file://$MODULE_DIR$/BurrowsWheeler">
+      <sourceFolder url="file://$MODULE_DIR$/BurrowsWheeler" isTestSource="false" />
+    </content>
     <content url="file://$MODULE_DIR$/CollinearPoints">
       <sourceFolder url="file://$MODULE_DIR$/CollinearPoints" isTestSource="false" />
     </content>
