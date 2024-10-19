@@ -10,8 +10,8 @@ public class MoveToFront {
         while (!BinaryStdIn.isEmpty()) {
             var currentChar = BinaryStdIn.readChar();
             var index = advance(currentChar);
-            System.out.println(index);
-//            BinaryStdOut.write(index);
+//            System.out.println(index);
+            BinaryStdOut.write(index);
         }
         BinaryStdIn.close();
         BinaryStdOut.close();

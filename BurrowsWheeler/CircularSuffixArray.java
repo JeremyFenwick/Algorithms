@@ -6,6 +6,10 @@ public class CircularSuffixArray {
     private final String input;
 
     public CircularSuffixArray(String s) {
+        if  (s == null) {
+            throw new java.lang.IllegalArgumentException();
+        }
+
         indices = new Integer[s.length()];
         input = s;
         populateIndices();
@@ -13,10 +17,15 @@ public class CircularSuffixArray {
     }
 
     public int length() {
+
         return indices.length;
     }
 
     public int index(int i) {
+        if (i < 0 || i >= this.indices.length) {
+            throw new java.lang.IllegalArgumentException();
+        }
+
         return indices[i];
     }
 
@@ -38,11 +47,12 @@ public class CircularSuffixArray {
                 index1++;
                 index2++;
             }
-            return 0;
+            // If the characters are the same, one must be shorter
+            return index2 - index1;
         };
     }
 
     public static void main(String[] args) {
-        var result = new CircularSuffixArray("MINE");
+        var result = new CircularSuffixArray("BANANA");
     }
 }
