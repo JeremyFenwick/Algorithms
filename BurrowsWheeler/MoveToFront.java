@@ -13,6 +13,7 @@ public class MoveToFront {
             System.out.println(index);
 //            BinaryStdOut.write(index);
         }
+        BinaryStdIn.close();
         BinaryStdOut.close();
     }
 
@@ -23,7 +24,9 @@ public class MoveToFront {
             var character = advance(currentIndex);
             BinaryStdOut.write(character);
         }
-        BinaryStdOut.close();    }
+        BinaryStdIn.close();
+        BinaryStdOut.close();
+    }
 
     private static void generateAsciiSequence() {
         for (int i = 0; i < R; i++) {
