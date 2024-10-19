@@ -4,27 +4,25 @@ import edu.princeton.cs.algs4.BinaryStdOut;
 public class MoveToFront {
     private static final int R = 256;
     private static final char[] SEQUENCE = new char[R];
+    private static final int BITS = 8;
 
     public static void encode() {
         generateAsciiSequence();
         while (!BinaryStdIn.isEmpty()) {
             var currentChar = BinaryStdIn.readChar();
             var index = advance(currentChar);
-//            System.out.println(index);
-            BinaryStdOut.write(index);
+            BinaryStdOut.write(index, BITS);
         }
-        BinaryStdIn.close();
         BinaryStdOut.close();
     }
 
     public static void decode() {
         generateAsciiSequence();
         while (!BinaryStdIn.isEmpty()) {
-            var currentIndex = BinaryStdIn.readInt();
+            var currentIndex = BinaryStdIn.readInt(BITS);
             var character = advance(currentIndex);
             BinaryStdOut.write(character);
         }
-        BinaryStdIn.close();
         BinaryStdOut.close();
     }
 
@@ -48,27 +46,37 @@ public class MoveToFront {
                 return i;
             }
         }
-        throw new IndexOutOfBoundsException("Character not found!");
+        throw new IndexOutOfBoundsException();
     }
 
     private static char advance(int targetIndex) {
         char lastChar = SEQUENCE[0];
 
         for (int i = 0; i < SEQUENCE.length; i++) {
+            // If we are at the target index, break the sequence
+            if (i == targetIndex) {
+                var result = SEQUENCE[i];
+                SEQUENCE[i] = lastChar;
+                SEQUENCE[0] = result;
+                return result;
+            }
             // Replace the current index with the last character. Store the last character
             var temp = SEQUENCE[i];
             SEQUENCE[i] = lastChar;
             lastChar = temp;
-            // Stop at the index match
-            if (i == targetIndex) {
-                SEQUENCE[0] = lastChar;
-                return SEQUENCE[i];
-            }
         }
-        throw new IndexOutOfBoundsException("Index not found!");
+        throw new IndexOutOfBoundsException();
     }
 
     public static void main(String[] args) {
-        encode();
+        if (args[0].equals("-")) {
+            encode();
+        }
+        else if (args[0].equals("+")) {
+            decode();
+        }
+        else {
+            throw new IllegalArgumentException();
+        }
     }
 }

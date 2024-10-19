@@ -37,7 +37,7 @@ public class CircularSuffixArray {
 
     private Comparator<Integer> suffixSort() {
         return (index1, index2) -> {
-            while (index1 < input.length() && index2 < input.length()) {
+            for (int i = 0; i < input.length(); i++) {
                 var firstCharacter = input.charAt(index1);
                 var secondCharacter = input.charAt(index2);
                 var compare = firstCharacter - secondCharacter;
@@ -46,13 +46,14 @@ public class CircularSuffixArray {
                 }
                 index1++;
                 index2++;
+                if (index1 == input.length()) { index1 = 0; }
+                if (index2 == input.length()) { index2 = 0; }
             }
-            // If the characters are the same, one must be shorter
-            return index2 - index1;
+            return 0;
         };
     }
 
     public static void main(String[] args) {
-        var result = new CircularSuffixArray("BANANA");
+//        var result = new CircularSuffixArray("BAA");
     }
 }

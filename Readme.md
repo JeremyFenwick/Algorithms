@@ -20,3 +20,4 @@ algorithms and data structures*
 | Seam Carving         | 100 / 100 | 💵    |
 | Baseball Elimination | 100 / 100 | 😤    |
 | Boggle               | 100 / 100 | 🤌    |
+| Burrows Wheeler      | 100 / 100 | 😪    |

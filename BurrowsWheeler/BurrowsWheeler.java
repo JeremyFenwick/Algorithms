@@ -1,6 +1,7 @@
 import edu.princeton.cs.algs4.BinaryStdIn;
 import edu.princeton.cs.algs4.BinaryStdOut;
-
+import java.util.ArrayDeque;
+import java.util.HashMap;
 import java.util.Arrays;
 
 public class BurrowsWheeler {
@@ -33,29 +34,26 @@ public class BurrowsWheeler {
         while (!BinaryStdIn.isEmpty()) {
             int first = BinaryStdIn.readInt();
             String s = BinaryStdIn.readString();
-            // Load the string
-            var input = new transformChar[s.length()];
-            for (int i = 0; i < input.length; i++) {
-                input[i] = new transformChar(s.charAt(i));
-            }
-            // Setup the result
-            var next = new int[input.length];
+            // Set up the result
+            var next = new int[s.length()];
             // Copy the array and sort the string
             var sortedInput = s.toCharArray();
             Arrays.sort(sortedInput);
-            // Load the suffixes
-            for (int i = 0; i < input.length; i++) {
-                // The character from the sorted input
-                var iCharacter = sortedInput[i];
-                // Match it against an 'unused' character from the original
-                for (int j = 0; j < input.length; j++) {
-                    var nextICharacter = input[j].character;
-                    if (iCharacter == nextICharacter && !input[j].used) {
-                        next[i] = j;
-                        input[j].used = true;
-                        break;
-                    }
+            // Create a hashmap of characters and their locations (queues)
+            var locations = new HashMap<Character, ArrayDeque<Integer>>();
+            for (int i = 0; i < s.length(); i++) {
+                var character = s.charAt(i);
+                // If it is empty, put a new queue there
+                if (!locations.containsKey(character)) {
+                    locations.put(character, new ArrayDeque<>());
                 }
+                locations.get(character).addLast(i);
+            }
+            // Load the next array
+            for (int i = 0; i < sortedInput.length; i++) {
+                var index = sortedInput[i];
+                var location = locations.get(index).removeFirst();
+                next[i] = location;
             }
             // Print the result
             var nextStep = first;
@@ -64,54 +62,16 @@ public class BurrowsWheeler {
                 nextStep = next[nextStep];
             }
         }
-        BinaryStdIn.close();
         BinaryStdOut.close();
     }
 
-//    public static void inverseTransform(int first, String s) {
-//        // Load the string
-//        var input = new transformChar[s.length()];
-//        for (int i = 0; i < input.length; i++) {
-//            input[i] = new transformChar(s.charAt(i));
-//        }
-//        // Setup the result
-//        var next = new int[input.length];
-//        // Copy the array and sort the string
-//        var sortedInput = s.toCharArray();
-//        Arrays.sort(sortedInput);
-//        // Load the suffixes
-//        for (int i = 0; i < input.length; i++) {
-//            // The character from the sorted input
-//            var iCharacter = sortedInput[i];
-//            // Match it against an 'unused' character from the original
-//            for (int j = 0; j < input.length; j++) {
-//                var nextICharacter = input[j].character;
-//                if (iCharacter == nextICharacter && !input[j].used) {
-//                    next[i] = j;
-//                    input[j].used = true;
-//                    break;
-//                }
-//            }
-//        }
-//        // Print the result
-//        var nextStep = first;
-//        for (int i = 0; i < next.length; i++) {
-//            System.out.print(sortedInput[nextStep]);
-//            nextStep = next[nextStep];
-//        }
-//    }
-
-    private static class transformChar {
-        public char character;
-        public boolean used;
-
-        public transformChar(char character) {
-            this.character = character;
-            used = false;
-        }
-    }
 
     public static void main(String[] args) {
-//        inverseTransform(3, "ARD!RCAAAABB");
+        if (args[0].equals("-")) {
+            BurrowsWheeler.transform();
+        }
+        if (args[0].equals("+")) {
+            BurrowsWheeler.inverseTransform();
+        }
     }
 }
